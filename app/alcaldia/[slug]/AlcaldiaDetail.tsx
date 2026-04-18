@@ -1,20 +1,48 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   loadEjecucion,
   loadHallazgos,
   loadScores,
   loadTitulares,
 } from "../../lib/loadData";
-import { scoreColor, scoreLabel, slugify } from "../../lib/types";
+import { slugify } from "../../lib/types";
 import type {
   AlcaldiaScore,
   Ejecucion,
   Hallazgo,
   Titular,
 } from "../../lib/types";
+
+type Zone = "v" | "a" | "r";
+
+function zoneFor(score: number | null): Zone | "n" {
+  if (score === null) return "n";
+  if (score >= 67) return "v";
+  if (score >= 34) return "a";
+  return "r";
+}
+
+const VERDICT_WORD: Record<Zone, string> = {
+  v: "TRANSPARENTE",
+  a: "A MEDIAS",
+  r: "OPACA",
+};
+
+const VERDICT_COLOR: Record<Zone, { ring: string; text: string; soft: string }> = {
+  v: { ring: "#286634", text: "#22562C", soft: "#DCEAE0" },
+  a: { ring: "#F1B12B", text: "#846117", soft: "#FDF1D5" },
+  r: { ring: "#C0000A", text: "#A30008", soft: "#FADADC" },
+};
+
+const SUB_META = [
+  { key: "score_presupuesto", label: "Presupuesto" },
+  { key: "score_plan", label: "Ministraciones" },
+  { key: "score_deuda", label: "Deuda" },
+  { key: "score_patrimonio", label: "Patrimonio" },
+] as const;
 
 export default function AlcaldiaDetail({ slug }: { slug: string }) {
   const [row, setRow] = useState<AlcaldiaScore | null>(null);
@@ -23,6 +51,7 @@ export default function AlcaldiaDetail({ slug }: { slug: string }) {
   const [hallazgos, setHallazgos] = useState<Hallazgo[]>([]);
   const [notFound, setNotFound] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [animateScore, setAnimateScore] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -57,9 +86,33 @@ export default function AlcaldiaDetail({ slug }: { slug: string }) {
     })();
   }, [slug]);
 
+  useEffect(() => {
+    if (!row?.score_total) {
+      setAnimateScore(0);
+      return;
+    }
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setAnimateScore(row.score_total);
+      return;
+    }
+    const target = row.score_total;
+    const duration = 1000;
+    const t0 = performance.now();
+    const tick = (t: number) => {
+      const elapsed = Math.min(1, (t - t0) / duration);
+      const eased = 1 - Math.pow(1 - elapsed, 3);
+      setAnimateScore(Math.round(target * eased));
+      if (elapsed < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [row]);
+
   if (loading) {
     return (
-      <section className="mx-auto max-w-6xl px-6 py-16 text-center text-sm text-ink-muted">
+      <section className="mx-auto max-w-[520px] px-6 py-16 text-center text-sm text-ink-muted">
         Sumando los datos oficiales…
       </section>
     );
@@ -67,7 +120,7 @@ export default function AlcaldiaDetail({ slug }: { slug: string }) {
 
   if (notFound || !row) {
     return (
-      <section className="mx-auto max-w-6xl px-6 py-16 text-center">
+      <section className="mx-auto max-w-[520px] px-6 py-16 text-center">
         <h2 className="text-2xl font-bold text-ink">Esta alcaldía no aparece.</h2>
         <p className="mt-2 text-sm text-ink-muted">
           Revisa el link o regresa al mapa.
@@ -82,470 +135,283 @@ export default function AlcaldiaDetail({ slug }: { slug: string }) {
     );
   }
 
-  const logros = hallazgos.filter((h) => h.tipo === "logro");
-  const pendientes = hallazgos.filter((h) => h.tipo === "pendiente");
-
-  const subs: Array<{ key: keyof AlcaldiaScore; label: string; body: string }> = [
-    {
-      key: "score_presupuesto",
-      label: "Presupuesto",
-      body: "¿Gasta lo que prometió gastar?",
-    },
-    {
-      key: "score_plan",
-      label: "Plan de gobierno",
-      body: "¿Cumple lo que dijo que iba a hacer?",
-    },
-    {
-      key: "score_deuda",
-      label: "Deuda",
-      body: "¿Debe con medida o está apretando la cuerda?",
-    },
-    {
-      key: "score_patrimonio",
-      label: "Patrimonio",
-      body: "¿Declara lo que tiene quien firma los cheques?",
-    },
-  ];
+  const zone = zoneFor(row.score_total);
+  const verdictColor = zone !== "n" ? VERDICT_COLOR[zone] : null;
+  const circ = 502;
+  const pct = (row.score_total ?? 0) / 100;
+  const offset = circ - circ * pct;
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-10">
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-widest text-primary-text">
-            Alcaldía · CDMX
-          </p>
-          <h2 className="mt-1 text-3xl font-bold tracking-tight sm:text-4xl">
-            {row.alcaldia}
-          </h2>
-          {titular && (
-            <p className="mt-2 text-sm text-ink-muted">
-              Titular:{" "}
-              <span className="font-semibold text-ink">{titular.titular}</span>{" "}
-              <span className="text-ink-muted">({titular.partido})</span> ·
-              Sexenio {row.sexenio}
-              {titular.por_confirmar && (
-                <span className="ml-2 rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent-text">
-                  Por verificar
-                </span>
+    <section className="mx-auto max-w-[520px] px-4 py-8 sm:py-10">
+      <div className="overflow-hidden rounded-2xl border border-border bg-paper-elevated shadow-[0_20px_60px_rgba(0,0,0,0.08)]">
+        <header className="flex items-center justify-between bg-ink px-6 py-4 text-paper">
+          <div className="flex items-center gap-3">
+            <div className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-paper">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/icono.svg" alt="" className="h-8 w-8" />
+            </div>
+            <div>
+              <h4 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-paper/70">
+                Detalle · El Cuentas
+              </h4>
+              <p className="text-[13px] text-paper/60">
+                {row.alcaldia} · Trust Score
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/"
+            aria-label="Volver al mapa"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-paper/10 text-xl text-paper transition hover:rotate-90 hover:bg-paper/20"
+          >
+            ×
+          </Link>
+        </header>
+
+        <div className="px-7 pb-10 pt-7">
+          {verdictColor && (
+            <div className="pb-2 pt-3 text-center">
+              <div
+                className="mb-3 inline-flex h-[52px] w-[52px] items-center justify-center rounded-full text-[28px]"
+                style={{ background: verdictColor.soft, color: verdictColor.text }}
+              >
+                {zone === "v" ? "✓" : zone === "a" ? "!" : "×"}
+              </div>
+              <div
+                className="font-display text-[44px] font-extrabold leading-none tracking-[-0.02em]"
+                style={{ color: verdictColor.text }}
+              >
+                {VERDICT_WORD[zone as Zone]}
+              </div>
+            </div>
+          )}
+
+          <div className="mb-4 flex flex-col items-center justify-center">
+            <div className="relative flex h-[180px] w-[180px] items-center justify-center">
+              <svg viewBox="0 0 180 180" className="absolute inset-0 -rotate-90">
+                <circle cx="90" cy="90" r="80" fill="none" stroke="#E8E0CC" strokeWidth="10" />
+                <circle
+                  cx="90"
+                  cy="90"
+                  r="80"
+                  fill="none"
+                  stroke={verdictColor?.ring ?? "#E8E0CC"}
+                  strokeWidth="10"
+                  strokeLinecap="round"
+                  strokeDasharray={circ}
+                  strokeDashoffset={offset}
+                  style={{
+                    transition:
+                      "stroke-dashoffset 1.2s cubic-bezier(0.2,0.8,0.2,1), stroke 0.4s",
+                  }}
+                />
+              </svg>
+              <div className="relative z-[1] flex flex-col items-center">
+                <div className="font-display tabular-nums text-[62px] font-extrabold leading-none tracking-[-0.03em] text-ink">
+                  {animateScore}
+                </div>
+                <div className="mt-0.5 text-xs text-ink-muted">/ 100</div>
+              </div>
+            </div>
+            <div className="mt-3 text-center">
+              <div className="font-display text-[22px] font-bold">
+                Alcaldía {row.alcaldia}
+              </div>
+              <div className="mt-0.5 text-xs text-ink-muted">
+                {titular
+                  ? `${titular.titular} (${titular.partido}) · Sexenio ${row.sexenio}`
+                  : `Sexenio ${row.sexenio}`}
+              </div>
+            </div>
+            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-border bg-paper px-3.5 py-2 text-xs font-medium text-ink-muted">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#286634"
+                strokeWidth="2.5"
+                className="h-3.5 w-3.5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              Verificado por{" "}
+              <strong className="font-semibold text-ink">datos.cdmx.gob.mx</strong>
+            </div>
+          </div>
+
+          <DrawerSection title="4 sub-scores">
+            <div className="grid grid-cols-4 gap-2.5">
+              {SUB_META.map((m) => {
+                const v = row[m.key] as number | null;
+                const z = zoneFor(v);
+                const color = z === "n" ? null : VERDICT_COLOR[z as Zone].ring;
+                const subPct = v ? v / 100 : 0;
+                const subCirc = 201;
+                const subOff = subCirc - subCirc * subPct;
+                return (
+                  <div key={m.key} className="flex flex-col items-center text-center">
+                    <div className="relative mb-2 h-[72px] w-[72px]">
+                      <svg viewBox="0 0 72 72" className="h-full w-full -rotate-90">
+                        <circle cx="36" cy="36" r="32" fill="none" stroke="#E8E0CC" strokeWidth="6" />
+                        {color && (
+                          <circle
+                            cx="36"
+                            cy="36"
+                            r="32"
+                            fill="none"
+                            stroke={color}
+                            strokeWidth="6"
+                            strokeLinecap="round"
+                            strokeDasharray={subCirc}
+                            strokeDashoffset={subOff}
+                            style={{
+                              transition:
+                                "stroke-dashoffset 1s cubic-bezier(0.2,0.8,0.2,1)",
+                            }}
+                          />
+                        )}
+                      </svg>
+                      <div className="font-display absolute inset-0 flex items-center justify-center text-[17px] font-bold text-ink">
+                        {v ?? "—"}
+                      </div>
+                    </div>
+                    <div className="text-[10px] font-semibold uppercase leading-tight tracking-[0.06em] text-ink-muted">
+                      {m.label}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </DrawerSection>
+
+          {ejecucion.length >= 2 && (
+            <DrawerSection title="Presupuesto año con año (M MXN)">
+              <Sparkline data={ejecucion} zone={zone as Zone} />
+            </DrawerSection>
+          )}
+
+          <DrawerSection title="Lo que encontramos">
+            <div className="flex flex-col gap-2.5">
+              {hallazgos.length === 0 && (
+                <p className="text-sm text-ink-muted">
+                  Aún no hay hallazgos publicados para esta alcaldía.
+                </p>
               )}
+              {hallazgos.map((h, i) => {
+                const tone: Zone = h.tipo === "logro" ? "v" : "a";
+                const c = VERDICT_COLOR[tone];
+                return (
+                  <div
+                    key={i}
+                    className="flex gap-3 rounded-xl border p-3 text-sm"
+                    style={{ background: c.soft, borderColor: `${c.ring}40` }}
+                  >
+                    <span
+                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-bold text-white"
+                      style={{ background: c.ring }}
+                    >
+                      {h.tipo === "logro" ? "✓" : "!"}
+                    </span>
+                    <span className="text-ink">{h.hallazgo_narrativo}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </DrawerSection>
+
+          {row.data_faltante && (
+            <p className="mt-6 rounded-xl border border-accent/40 bg-accent-soft p-3 text-[11px] text-accent-text">
+              Score parcial. Algunos componentes (patrimonio, deuda por
+              alcaldía) aún no se publican con granularidad. Cuando aparezcan en
+              datos.cdmx.gob.mx el score se actualiza.{" "}
+              <Link href="/metodologia" className="underline hover:text-ink">
+                Cómo lo calculamos
+              </Link>
+              .
             </p>
           )}
         </div>
-
-        <ScoreBadge score={row.score_total} />
-      </div>
-
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {subs.map((s) => (
-          <SubScoreCard
-            key={s.key}
-            label={s.label}
-            body={s.body}
-            score={row[s.key] as number | null}
-          />
-        ))}
-      </div>
-
-      {ejecucion.length > 0 && (() => {
-        const hasEjercido = ejecucion.some((e) => e.ejercido != null);
-        return (
-          <div className="mt-10 rounded-2xl border border-border bg-paper-elevated p-6">
-            <div className="flex items-baseline justify-between">
-              <div>
-                <h3 className="text-lg font-bold text-ink">Gasto año por año</h3>
-                <p className="text-sm text-ink-muted">
-                  {hasEjercido
-                    ? "Aprobado vs ejercido, en millones de pesos."
-                    : "Presupuesto aprobado, en millones de pesos. El ejercido aún no está publicado por la alcaldía."}
-                </p>
-              </div>
-              <Legend showEjercido={hasEjercido} />
-            </div>
-            <BudgetStats data={ejecucion} />
-            <BudgetChart data={ejecucion} />
-            <BudgetTable data={ejecucion} />
-          </div>
-        );
-      })()}
-
-      <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <NarrativeCard
-          title="Lo que se logró"
-          subtitle={
-            logros.length > 0
-              ? `${logros.length} puntos a favor`
-              : "Sin logros documentados aún"
-          }
-          items={logros}
-          tone="success"
-        />
-        <NarrativeCard
-          title="Lo que falta"
-          subtitle={
-            pendientes.length > 0
-              ? `${pendientes.length} cosas que tu alcaldía debería explicarte`
-              : "Sin pendientes documentados aún"
-          }
-          items={pendientes}
-          tone="danger"
-        />
-      </div>
-
-      {row.data_faltante && (
-        <p className="mt-6 rounded-xl border border-accent/40 bg-accent-soft p-4 text-xs text-accent-text">
-          Esta alcaldía aún no publica información suficiente para calcular
-          todos los componentes del score. Eso también dice algo.
-        </p>
-      )}
-
-      <p className="mt-6 text-xs text-ink-muted">
-        Fuente:{" "}
-        <a
-          href="https://datos.cdmx.gob.mx"
-          target="_blank"
-          rel="noreferrer"
-          className="text-primary-text underline hover:text-primary"
-        >
-          datos.cdmx.gob.mx
-        </a>
-        . Presupuesto aprobado oficial, 2018–2024. Cuando la alcaldía publique
-        el monto ejercido, el score se actualiza automáticamente.
-      </p>
-
-      <div className="mt-10">
-        <Link
-          href="/"
-          className="text-sm font-semibold text-ink-muted hover:text-primary-text"
-        >
-          ← Volver al mapa
-        </Link>
       </div>
     </section>
   );
 }
 
-function ScoreBadge({ score }: { score: number | null }) {
-  const color = scoreColor(score);
-  return (
-    <div className="flex items-center gap-4 rounded-2xl border border-border bg-paper-elevated px-5 py-3">
-      <div
-        className="flex h-16 w-16 items-center justify-center rounded-full text-xl font-bold text-white"
-        style={{ background: color }}
-      >
-        {score ?? "—"}
-      </div>
-      <div>
-        <div className="text-[11px] font-bold uppercase tracking-widest text-ink-muted">
-          Trust Score
-        </div>
-        <div className="text-lg font-bold text-ink">{scoreLabel(score)}</div>
-        <div className="text-xs text-ink-muted">de 100</div>
-      </div>
-    </div>
-  );
-}
-
-function SubScoreCard({
-  label,
-  body,
-  score,
-}: {
-  label: string;
-  body: string;
-  score: number | null;
-}) {
-  const pct = score ?? 0;
-  const color = scoreColor(score);
-  return (
-    <div
-      className="rounded-2xl border border-border border-l-4 bg-paper-elevated p-4"
-      style={{ borderLeftColor: color }}
-    >
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <div className="text-sm font-bold text-ink">{label}</div>
-          <div className="mt-0.5 text-xs text-ink-muted">{body}</div>
-        </div>
-        <div
-          className="shrink-0 rounded-full px-2.5 py-1 text-xs font-bold text-white"
-          style={{ background: color }}
-        >
-          {score ?? "N.A."}
-        </div>
-      </div>
-      <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-border/60">
-        <div
-          className="h-full rounded-full"
-          style={{
-            width: `${Math.min(Math.max(pct, 0), 100)}%`,
-            background: color,
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
-function Legend({ showEjercido }: { showEjercido: boolean }) {
-  return (
-    <div className="flex gap-4 text-xs text-ink-muted">
-      <span className="flex items-center gap-1.5">
-        <span className="inline-block h-2 w-3 rounded-sm bg-primary" />
-        Aprobado
-      </span>
-      {showEjercido && (
-        <span className="flex items-center gap-1.5">
-          <span className="inline-block h-2 w-3 rounded-sm bg-success" />
-          Ejercido
-        </span>
-      )}
-    </div>
-  );
-}
-
-function BudgetStats({ data }: { data: Ejecucion[] }) {
-  const aprobados = data.map((d) => d.aprobado);
-  const total = aprobados.reduce((a, b) => a + b, 0);
-  const promedio = Math.round(total / aprobados.length);
-  const pico = data.reduce((a, b) => (a.aprobado > b.aprobado ? a : b));
-  const first = aprobados[0] ?? 0;
-  const last = aprobados[aprobados.length - 1] ?? 0;
-  const crecimiento = first > 0 ? Math.round(((last - first) / first) * 100) : 0;
-  const creceColor =
-    crecimiento > 0 ? "text-success-text" : crecimiento < 0 ? "text-danger-text" : "text-ink-muted";
-
-  const fmt = (n: number) =>
-    n.toLocaleString("es-MX", { maximumFractionDigits: 0 });
-
-  return (
-    <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <StatBlock label="Total sexenio" value={`$${fmt(total)} M`} sub="Presupuesto acumulado" />
-      <StatBlock label="Promedio anual" value={`$${fmt(promedio)} M`} sub="Por año" />
-      <StatBlock label="Año pico" value={`${pico.anio}`} sub={`$${fmt(pico.aprobado)} M`} />
-      <StatBlock
-        label="Crecimiento"
-        value={`${crecimiento > 0 ? "+" : ""}${crecimiento}%`}
-        sub={`${data[0].anio} → ${data[data.length - 1].anio}`}
-        valueClass={creceColor}
-      />
-    </div>
-  );
-}
-
-function StatBlock({
-  label,
-  value,
-  sub,
-  valueClass = "text-ink",
-}: {
-  label: string;
-  value: string;
-  sub: string;
-  valueClass?: string;
-}) {
-  return (
-    <div className="rounded-xl border border-border bg-paper p-3">
-      <div className="text-[10px] font-bold uppercase tracking-widest text-ink-muted">
-        {label}
-      </div>
-      <div className={`mt-1 text-xl font-bold tabular-nums ${valueClass}`}>
-        {value}
-      </div>
-      <div className="text-[11px] text-ink-muted">{sub}</div>
-    </div>
-  );
-}
-
-function BudgetChart({ data }: { data: Ejecucion[] }) {
-  const max = useMemo(() => {
-    const all = data.flatMap((d) => [
-      d.aprobado,
-      d.modificado ?? 0,
-      d.ejercido ?? 0,
-    ]);
-    return Math.max(...all, 1);
-  }, [data]);
-
-  const promedio = useMemo(
-    () => data.reduce((a, b) => a + b.aprobado, 0) / data.length,
-    [data]
-  );
-  const promedioPct = (promedio / max) * 100;
-
-  return (
-    <div className="mt-6 overflow-x-auto">
-      <div className="relative flex min-w-full items-end gap-4 px-1 pb-2">
-        <div
-          className="pointer-events-none absolute left-0 right-0 flex items-center"
-          style={{ bottom: `${promedioPct}%` }}
-        >
-          <div className="h-px flex-1 border-t border-dashed border-accent/70" />
-          <span className="ml-2 rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent-text">
-            Promedio ${Math.round(promedio).toLocaleString("es-MX")} M
-          </span>
-        </div>
-        {data.map((d, i) => {
-          const prev = i > 0 ? data[i - 1].aprobado : null;
-          const delta =
-            prev && prev > 0 ? Math.round(((d.aprobado - prev) / prev) * 100) : null;
-          const deltaColor =
-            delta === null
-              ? "text-ink-muted"
-              : delta > 0
-                ? "text-success-text"
-                : delta < 0
-                  ? "text-danger-text"
-                  : "text-ink-muted";
-          const tasa =
-            d.modificado && d.modificado > 0 && d.ejercido != null
-              ? Math.round((d.ejercido / d.modificado) * 100)
-              : null;
-          const tasaColor =
-            tasa === null
-              ? "text-ink-muted"
-              : tasa >= 90
-                ? "text-success-text"
-                : tasa >= 80
-                  ? "text-accent-text"
-                  : "text-danger-text";
-          return (
-            <div key={d.anio} className="flex min-w-[64px] flex-1 flex-col items-center">
-              <div className="flex h-56 w-full items-end justify-center gap-1">
-                <div
-                  className="group relative w-6 rounded-t bg-primary transition hover:bg-primary-light"
-                  style={{ height: `${(d.aprobado / max) * 100}%` }}
-                >
-                  <span className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 rounded bg-ink px-1.5 py-0.5 text-[10px] font-bold text-ink-inverse opacity-0 transition group-hover:opacity-100">
-                    ${d.aprobado.toLocaleString("es-MX")}M
-                  </span>
-                </div>
-                {d.ejercido != null && (
-                  <div
-                    className="w-6 rounded-t bg-success"
-                    style={{ height: `${(d.ejercido / max) * 100}%` }}
-                    title={`Ejercido ${d.ejercido} M`}
-                  />
-                )}
-              </div>
-              <div className="mt-2 text-[11px] font-bold text-ink">{d.anio}</div>
-              {delta !== null && (
-                <div className={`text-[10px] font-semibold ${deltaColor}`}>
-                  {delta > 0 ? "+" : ""}
-                  {delta}%
-                </div>
-              )}
-              {tasa !== null && (
-                <div className={`text-[10px] font-semibold ${tasaColor}`}>
-                  {tasa}%
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function BudgetTable({ data }: { data: Ejecucion[] }) {
-  const na = <span className="text-ink-muted">No publicado</span>;
-  return (
-    <div className="mt-8 overflow-x-auto">
-      <table className="w-full text-left text-sm">
-        <thead className="border-b border-border text-[11px] uppercase tracking-widest text-ink-muted">
-          <tr>
-            <th className="py-2 pr-4 font-bold">Año</th>
-            <th className="py-2 pr-4 font-bold">Aprobado (M MXN)</th>
-            <th className="py-2 pr-4 font-bold">Modificado (M MXN)</th>
-            <th className="py-2 pr-4 font-bold">Ejercido (M MXN)</th>
-            <th className="py-2 pr-4 font-bold">Tasa ejecución</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border">
-          {data.map((d) => {
-            const tasa =
-              d.modificado && d.modificado > 0 && d.ejercido != null
-                ? (d.ejercido / d.modificado) * 100
-                : null;
-            const color =
-              tasa === null
-                ? "text-ink-muted"
-                : tasa >= 90
-                  ? "text-success-text"
-                  : tasa >= 80
-                    ? "text-accent-text"
-                    : "text-danger-text";
-            return (
-              <tr key={d.anio} className="text-ink">
-                <td className="py-2 pr-4 font-bold">{d.anio}</td>
-                <td className="py-2 pr-4 tabular-nums">
-                  {d.aprobado.toLocaleString("es-MX")}
-                </td>
-                <td className="py-2 pr-4 tabular-nums">
-                  {d.modificado != null
-                    ? d.modificado.toLocaleString("es-MX")
-                    : na}
-                </td>
-                <td className="py-2 pr-4 tabular-nums">
-                  {d.ejercido != null
-                    ? d.ejercido.toLocaleString("es-MX")
-                    : na}
-                </td>
-                <td className={`py-2 pr-4 font-bold tabular-nums ${color}`}>
-                  {tasa !== null ? `${tasa.toFixed(1)}%` : "—"}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function NarrativeCard({
+function DrawerSection({
   title,
-  subtitle,
-  items,
-  tone,
+  children,
 }: {
   title: string;
-  subtitle: string;
-  items: Hallazgo[];
-  tone: "success" | "danger";
+  children: React.ReactNode;
 }) {
-  const bg =
-    tone === "success"
-      ? "bg-success-soft border-success/30"
-      : "bg-danger-soft border-danger/30";
-  const icon = tone === "success" ? "✓" : "!";
-  const iconColor = tone === "success" ? "text-success-text" : "text-danger-text";
+  return (
+    <section className="mt-7 border-t border-border pt-6">
+      <h5 className="mb-3.5 text-[11px] font-bold uppercase tracking-[0.15em] text-ink-muted">
+        {title}
+      </h5>
+      {children}
+    </section>
+  );
+}
+
+function Sparkline({ data, zone }: { data: Ejecucion[]; zone: Zone | "n" }) {
+  const values = data.map((d) => d.aprobado ?? d.ejercido ?? 0);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min || 1;
+  const w = 420;
+  const h = 60;
+  const stepX = w / (values.length - 1 || 1);
+  const points = values.map((v, i) => {
+    const x = i * stepX;
+    const y = h - ((v - min) / range) * (h - 10) - 5;
+    return [x, y] as [number, number];
+  });
+  const path = points
+    .map((p, i) => `${i === 0 ? "M" : "L"}${p[0].toFixed(1)},${p[1].toFixed(1)}`)
+    .join(" ");
+  const area = path + ` L${points[points.length - 1][0].toFixed(1)},${h} L0,${h} Z`;
+  const color = zone === "n" ? "#4A4A4A" : VERDICT_COLOR[zone as Zone].ring;
+  const first = values[0] || 1;
+  const last = values[values.length - 1] || 0;
+  const delta = values.length >= 2 ? Math.round(((last - first) / first) * 100) : 0;
+  const deltaClass =
+    delta > 0
+      ? "text-success-text"
+      : delta < 0
+        ? "text-danger-text"
+        : "text-ink-muted";
 
   return (
-    <div className={`rounded-2xl border p-5 ${bg}`}>
-      <h3 className="text-base font-bold text-ink">{title}</h3>
-      <p className="text-xs text-ink-muted">{subtitle}</p>
-      <ul className="mt-4 space-y-2">
-        {items.length === 0 && (
-          <li className="rounded-xl bg-paper-elevated/70 p-3 text-xs text-ink-muted">
-            Aún no documentamos nada aquí. El equipo lo está redactando.
-          </li>
-        )}
-        {items.map((h, i) => (
-          <li
-            key={i}
-            className="flex gap-2.5 rounded-xl bg-paper-elevated p-3 text-sm text-ink shadow-sm"
-          >
-            <span
-              className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-paper text-xs font-black ${iconColor}`}
-            >
-              {icon}
-            </span>
-            <span>{h.hallazgo_narrativo}</span>
-          </li>
+    <div>
+      <div className="mb-2 flex items-center justify-between text-[12px]">
+        <strong className="font-semibold text-ink">Presupuesto sexenio</strong>
+        <span className={`font-semibold ${deltaClass}`}>
+          {delta > 0 ? "+" : ""}
+          {delta}% vs {data[0].anio}
+        </span>
+      </div>
+      <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" className="h-[60px] w-full">
+        <path d={area} fill={color} opacity="0.15" />
+        <path
+          d={path}
+          fill="none"
+          stroke={color}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {points.map((p, i) => (
+          <circle key={i} cx={p[0]} cy={p[1]} r="3.5" fill={color} />
         ))}
-      </ul>
+      </svg>
+      <div className="mt-1 flex justify-between text-[10px] font-semibold text-ink-muted">
+        {data.map((d) => (
+          <span key={d.anio}>{d.anio}</span>
+        ))}
+      </div>
     </div>
   );
 }
