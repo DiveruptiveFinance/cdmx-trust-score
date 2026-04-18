@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Trust Score CDMX",
+  title: "El Cuentas · Tu alcaldía en claro",
   description:
-    "Qué tan transparente, fiel y confiable es cada alcaldía de la CDMX. Trust Score 0-100 basado en datos públicos.",
+    "El Cuentas mide qué tan transparente es cada una de las 16 alcaldías de la CDMX, con datos oficiales y en un idioma que sí se entiende.",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="es-MX"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>

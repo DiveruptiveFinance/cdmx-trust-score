@@ -91,13 +91,13 @@ export default function MapClient() {
       <div className="absolute bottom-3 left-3 z-[500] rounded-xl bg-white/95 p-3 text-xs shadow-md">
         <div className="mb-1 font-semibold text-zinc-700">Trust Score</div>
         <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded" style={{ background: "#16a34a" }} /> Alta (70-100)
+          <span className="h-3 w-3 rounded" style={{ background: "#16a34a" }} /> Transparente · 70–100
         </div>
         <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded" style={{ background: "#eab308" }} /> Media (50-69)
+          <span className="h-3 w-3 rounded" style={{ background: "#eab308" }} /> A medias · 50–69
         </div>
         <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded" style={{ background: "#dc2626" }} /> Baja (0-49)
+          <span className="h-3 w-3 rounded" style={{ background: "#dc2626" }} /> Opaca · 0–49
         </div>
         <div className="flex items-center gap-2">
           <span className="h-3 w-3 rounded" style={{ background: "#d1d5db" }} /> Sin datos

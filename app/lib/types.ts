@@ -33,7 +33,7 @@ export function scoreColor(score: number | null): string {
 
 export function scoreLabel(score: number | null): string {
   if (score === null) return "Sin datos";
-  if (score >= 70) return "Alta";
-  if (score >= 50) return "Media";
-  return "Baja";
+  if (score >= 70) return "Transparente";
+  if (score >= 50) return "A medias";
+  return "Opaca";
 }
