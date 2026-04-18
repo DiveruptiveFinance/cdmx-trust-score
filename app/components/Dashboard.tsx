@@ -23,7 +23,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-8 text-center text-sm text-zinc-500">
+      <div className="rounded-2xl border border-border bg-paper-elevated p-8 text-center text-sm text-ink-muted">
         Sumando los datos oficiales…
       </div>
     );
@@ -39,15 +39,35 @@ export default function Dashboard() {
             withScore.length
         )
       : null;
-  const sinDatos = rows.filter((r) => r.score_total === null).length;
+  const sinDatos = rows.filter((r) => r.score_total === null || r.data_faltante).length;
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-4">
-        <StatCard label="Promedio CDMX" value={promedio !== null ? `${promedio}/100` : "—"} />
-        <StatCard label="Mejor puntuada" value={top3[0]?.alcaldia ?? "—"} />
-        <StatCard label="Peor puntuada" value={bottom3[0]?.alcaldia ?? "—"} />
-        <StatCard label="Sin datos suficientes" value={`${sinDatos} alcaldías`} />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          label="Promedio CDMX"
+          value={promedio !== null ? `${promedio}` : "—"}
+          unit="/ 100"
+          tone="primary"
+        />
+        <StatCard
+          label="Mejor puntuada"
+          value={top3[0]?.alcaldia ?? "—"}
+          unit={top3[0] ? `${top3[0].score_total}/100` : ""}
+          tone="success"
+        />
+        <StatCard
+          label="Peor puntuada"
+          value={bottom3[0]?.alcaldia ?? "—"}
+          unit={bottom3[0] ? `${bottom3[0].score_total}/100` : ""}
+          tone="danger"
+        />
+        <StatCard
+          label="Con datos incompletos"
+          value={`${sinDatos}`}
+          unit="alcaldías"
+          tone="warning"
+        />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -55,46 +75,51 @@ export default function Dashboard() {
           title="Las más transparentes"
           subtitle="Top 3 · score más alto"
           rows={top3}
-          accent="bg-green-50 border-green-200"
+          tone="success"
         />
         <RankingCard
           title="Las que más deben explicar"
           subtitle="Bottom 3 · score más bajo"
           rows={bottom3}
-          accent="bg-red-50 border-red-200"
+          tone="danger"
         />
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white">
-        <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-3">
-          <h3 className="text-sm font-semibold text-zinc-900">
-            Ranking completo · 16 alcaldías
-          </h3>
-          <span className="text-xs text-zinc-500">
+      <div className="overflow-hidden rounded-2xl border border-border bg-paper-elevated">
+        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+          <div>
+            <h3 className="text-base font-semibold text-ink">
+              Ranking completo
+            </h3>
+            <p className="text-xs text-ink-muted">
+              Las 16 alcaldías del sexenio 2024-2030
+            </p>
+          </div>
+          <span className="text-xs text-ink-muted">
             Toca una para ver el detalle
           </span>
         </div>
-        <ol className="divide-y divide-zinc-100">
+        <ol className="divide-y divide-border">
           {rows.map((r, i) => (
             <li key={r.alcaldia}>
               <Link
                 href={`/alcaldia/${slugify(r.alcaldia)}`}
-                className="flex items-center gap-4 px-5 py-3 transition hover:bg-zinc-50"
+                className="flex items-center gap-4 px-5 py-3 transition hover:bg-primary-soft/40"
               >
-                <span className="w-6 text-right text-sm tabular-nums text-zinc-400">
+                <span className="w-6 text-right text-sm tabular-nums text-ink-muted">
                   {i + 1}
                 </span>
                 <span
-                  className="h-3 w-3 shrink-0 rounded-full"
+                  className="h-2.5 w-2.5 shrink-0 rounded-full"
                   style={{ background: scoreColor(r.score_total) }}
                 />
-                <span className="flex-1 text-sm font-medium text-zinc-900">
+                <span className="flex-1 text-sm font-medium text-ink">
                   {r.alcaldia}
                 </span>
-                <span className="text-xs text-zinc-500">
+                <span className="hidden text-xs text-ink-muted sm:inline">
                   {scoreLabel(r.score_total)}
                 </span>
-                <span className="w-14 text-right text-sm tabular-nums font-semibold text-zinc-900">
+                <span className="w-14 text-right text-base tabular-nums font-semibold text-ink">
                   {r.score_total ?? "—"}
                 </span>
               </Link>
@@ -106,13 +131,34 @@ export default function Dashboard() {
   );
 }
 
-function StatCard({ label, value }: { label: string; value: string }) {
+function StatCard({
+  label,
+  value,
+  unit,
+  tone,
+}: {
+  label: string;
+  value: string;
+  unit?: string;
+  tone: "primary" | "success" | "warning" | "danger";
+}) {
+  const toneClass =
+    tone === "primary"
+      ? "border-l-primary"
+      : tone === "success"
+        ? "border-l-success"
+        : tone === "warning"
+          ? "border-l-warning"
+          : "border-l-danger";
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-4">
-      <div className="text-[11px] uppercase tracking-wide text-zinc-500">
+    <div
+      className={`rounded-2xl border border-border border-l-4 bg-paper-elevated p-4 ${toneClass}`}
+    >
+      <div className="text-[11px] uppercase tracking-widest text-ink-muted">
         {label}
       </div>
-      <div className="mt-1 text-base font-semibold text-zinc-900">{value}</div>
+      <div className="mt-1 text-xl font-bold text-ink">{value}</div>
+      {unit && <div className="text-xs text-ink-muted">{unit}</div>}
     </div>
   );
 }
@@ -121,34 +167,38 @@ function RankingCard({
   title,
   subtitle,
   rows,
-  accent,
+  tone,
 }: {
   title: string;
   subtitle: string;
   rows: AlcaldiaScore[];
-  accent: string;
+  tone: "success" | "danger";
 }) {
+  const toneBg =
+    tone === "success"
+      ? "bg-success-soft border-success/20"
+      : "bg-danger-soft border-danger/20";
   return (
-    <div className={`rounded-2xl border p-5 ${accent}`}>
-      <div className="mb-3">
-        <h3 className="text-sm font-semibold text-zinc-900">{title}</h3>
-        <p className="text-xs text-zinc-500">{subtitle}</p>
+    <div className={`rounded-2xl border p-5 ${toneBg}`}>
+      <div className="mb-4">
+        <h3 className="text-base font-bold text-ink">{title}</h3>
+        <p className="text-xs text-ink-muted">{subtitle}</p>
       </div>
       <ol className="space-y-2">
         {rows.map((r, i) => (
           <li key={r.alcaldia}>
             <Link
               href={`/alcaldia/${slugify(r.alcaldia)}`}
-              className="flex items-center gap-3 rounded-lg bg-white px-3 py-2 shadow-sm transition hover:shadow-md"
+              className="flex items-center gap-3 rounded-xl bg-paper-elevated px-3.5 py-2.5 transition hover:ring-2 hover:ring-primary/40"
             >
-              <span className="w-5 text-sm tabular-nums text-zinc-400">
+              <span className="w-5 text-sm tabular-nums text-ink-muted">
                 {i + 1}
               </span>
-              <span className="flex-1 text-sm font-medium text-zinc-900">
+              <span className="flex-1 text-sm font-semibold text-ink">
                 {r.alcaldia}
               </span>
               <span
-                className="rounded-full px-2 py-0.5 text-xs font-semibold text-white"
+                className="rounded-full px-2.5 py-1 text-xs font-bold text-white"
                 style={{ background: scoreColor(r.score_total) }}
               >
                 {r.score_total ?? "—"}

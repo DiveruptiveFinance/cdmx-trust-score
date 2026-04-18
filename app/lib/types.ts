@@ -44,15 +44,22 @@ export function slugify(name: string): string {
 }
 
 export function scoreColor(score: number | null): string {
-  if (score === null) return "#d1d5db";
-  if (score >= 70) return "#16a34a";
-  if (score >= 50) return "#eab308";
-  return "#dc2626";
+  if (score === null) return "#E8E0CC";
+  if (score >= 67) return "#286634";
+  if (score >= 34) return "#F1B12B";
+  return "#C0000A";
+}
+
+export function scoreColorText(score: number | null): string {
+  if (score === null) return "#4A4A4A";
+  if (score >= 67) return "#22562C";
+  if (score >= 34) return "#846117";
+  return "#A30008";
 }
 
 export function scoreLabel(score: number | null): string {
   if (score === null) return "Sin datos";
-  if (score >= 70) return "Transparente";
-  if (score >= 50) return "A medias";
+  if (score >= 67) return "Transparente";
+  if (score >= 34) return "A medias";
   return "Opaca";
 }

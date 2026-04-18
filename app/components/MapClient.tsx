@@ -38,8 +38,8 @@ export default function MapClient() {
       fillColor: scoreColor(score),
       weight: 1.5,
       opacity: 1,
-      color: "#ffffff",
-      fillOpacity: 0.78,
+      color: "#FFFCF5",
+      fillOpacity: 0.82,
     };
   };
 
@@ -49,11 +49,11 @@ export default function MapClient() {
     layer.on({
       mouseover: (e) => {
         const target = e.target as { setStyle: (s: PathOptions) => void };
-        target.setStyle({ weight: 3, color: "#111827", fillOpacity: 0.92 });
+        target.setStyle({ weight: 3, color: "#1A1A1A", fillOpacity: 0.92 });
       },
       mouseout: (e) => {
         const target = e.target as { setStyle: (s: PathOptions) => void };
-        target.setStyle({ weight: 1.5, color: "#ffffff", fillOpacity: 0.78 });
+        target.setStyle({ weight: 1.5, color: "#FFFCF5", fillOpacity: 0.82 });
       },
       click: () => {
         router.push(`/alcaldia/${slugify(name)}`);
@@ -68,7 +68,7 @@ export default function MapClient() {
   };
 
   return (
-    <div className="relative h-[600px] w-full overflow-hidden rounded-2xl border border-zinc-200 shadow-sm">
+    <div className="relative h-[600px] w-full overflow-hidden rounded-2xl border border-border shadow-sm">
       <MapContainer
         center={CDMX_CENTER}
         zoom={10}
@@ -88,19 +88,25 @@ export default function MapClient() {
         )}
       </MapContainer>
 
-      <div className="absolute bottom-3 left-3 z-[500] rounded-xl bg-white/95 p-3 text-xs shadow-md">
-        <div className="mb-1 font-semibold text-zinc-700">Trust Score</div>
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded" style={{ background: "#16a34a" }} /> Transparente · 70–100
+      <div className="absolute bottom-3 left-3 z-[500] space-y-1 rounded-xl border border-border bg-paper-elevated/95 p-3 text-xs shadow-md backdrop-blur-sm">
+        <div className="mb-1 text-[11px] font-bold uppercase tracking-widest text-ink-muted">
+          Trust Score
         </div>
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded" style={{ background: "#eab308" }} /> A medias · 50–69
+        <div className="flex items-center gap-2 text-ink">
+          <span className="h-3 w-3 rounded-sm" style={{ background: "#286634" }} />
+          Transparente · 67–100
         </div>
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded" style={{ background: "#dc2626" }} /> Opaca · 0–49
+        <div className="flex items-center gap-2 text-ink">
+          <span className="h-3 w-3 rounded-sm" style={{ background: "#F1B12B" }} />
+          A medias · 34–66
         </div>
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded" style={{ background: "#d1d5db" }} /> Sin datos
+        <div className="flex items-center gap-2 text-ink">
+          <span className="h-3 w-3 rounded-sm" style={{ background: "#C0000A" }} />
+          Opaca · 0–33
+        </div>
+        <div className="flex items-center gap-2 text-ink-muted">
+          <span className="h-3 w-3 rounded-sm border border-border" style={{ background: "#E8E0CC" }} />
+          Sin datos
         </div>
       </div>
     </div>

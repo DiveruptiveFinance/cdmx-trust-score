@@ -64,32 +64,35 @@ export default function ChatWidget() {
     <>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-6 right-6 z-[900] flex h-14 w-14 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg transition hover:scale-105"
-        aria-label="Abrir chat con El Cuentas"
+        className="fixed bottom-6 right-6 z-[900] flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-lg transition hover:bg-primary-light focus-visible:ring-[3px] focus-visible:ring-primary/35"
+        aria-label={open ? "Cerrar chat" : "Abrir chat con El Cuentas"}
       >
-        {open ? "×" : "💬"}
+        {open ? <CloseIcon /> : <ChatIcon />}
       </button>
 
       {open && (
-        <div className="fixed bottom-24 right-6 z-[900] flex h-[560px] w-[380px] flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-2xl">
-          <div className="border-b border-zinc-200 bg-zinc-900 px-4 py-3 text-white">
-            <div className="text-sm font-semibold">El Cuentas</div>
-            <div className="text-[11px] text-zinc-300">
+        <div className="fixed bottom-24 right-6 z-[900] flex h-[560px] w-[380px] flex-col overflow-hidden rounded-2xl border border-border bg-paper-elevated shadow-2xl">
+          <div className="border-b border-border bg-ink px-4 py-3 text-ink-inverse">
+            <div className="flex items-center gap-2">
+              <span className="inline-block h-2 w-2 rounded-full bg-primary-light" />
+              <span className="text-sm font-semibold">El Cuentas</span>
+            </div>
+            <div className="mt-0.5 text-[11px] text-ink-inverse/70">
               El único chilango que leyó los 400 PDFs.
             </div>
           </div>
 
-          <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3 text-sm">
+          <div className="flex-1 space-y-3 overflow-y-auto bg-paper px-4 py-4 text-sm">
             {messages.map((m, i) => (
               <div
                 key={i}
                 className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3 py-2 ${
+                  className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 leading-snug ${
                     m.role === "user"
-                      ? "bg-zinc-900 text-white"
-                      : "bg-zinc-100 text-zinc-800"
+                      ? "bg-primary text-white"
+                      : "bg-paper-elevated text-ink ring-1 ring-border"
                   }`}
                 >
                   {m.content}
@@ -98,7 +101,7 @@ export default function ChatWidget() {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="rounded-2xl bg-zinc-100 px-3 py-2 text-zinc-500">
+                <div className="rounded-2xl bg-paper-elevated px-3.5 py-2.5 text-ink-muted ring-1 ring-border">
                   Déjame revisar los datos oficiales…
                 </div>
               </div>
@@ -109,7 +112,7 @@ export default function ChatWidget() {
                   <button
                     key={c}
                     onClick={() => send(c)}
-                    className="rounded-full border border-zinc-300 bg-white px-3 py-1 text-xs text-zinc-700 transition hover:border-zinc-900"
+                    className="rounded-full border border-border bg-paper-elevated px-3 py-1 text-xs text-ink-muted transition hover:border-primary hover:text-primary-text"
                   >
                     {c}
                   </button>
@@ -119,19 +122,19 @@ export default function ChatWidget() {
             <div ref={bottomRef} />
           </div>
 
-          <div className="border-t border-zinc-200 p-2">
+          <div className="border-t border-border bg-paper-elevated p-2">
             <div className="flex gap-2">
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && send()}
                 placeholder="Pregúntale al Cuentas… ¿en qué gastó mi alcaldía?"
-                className="flex-1 rounded-full border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none"
+                className="flex-1 rounded-full border border-border bg-paper px-4 py-2 text-sm text-ink placeholder:text-ink-muted/70 focus:border-primary focus:outline-none"
               />
               <button
                 onClick={() => send()}
                 disabled={loading}
-                className="rounded-full bg-zinc-900 px-4 py-2 text-sm text-white disabled:opacity-50"
+                className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-ink-inverse transition hover:bg-primary disabled:opacity-50"
               >
                 Enviar
               </button>
@@ -140,5 +143,42 @@ export default function ChatWidget() {
         </div>
       )}
     </>
+  );
+}
+
+function ChatIcon() {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
+    </svg>
   );
 }

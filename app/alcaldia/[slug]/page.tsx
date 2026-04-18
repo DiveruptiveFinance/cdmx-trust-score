@@ -10,17 +10,17 @@ export default async function AlcaldiaPage({
   const { slug } = await params;
 
   return (
-    <main className="min-h-screen bg-white text-zinc-900">
-      <header className="border-b border-zinc-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link href="/" className="text-sm text-zinc-600 hover:text-zinc-900">
+    <main className="min-h-screen bg-paper text-ink">
+      <header className="border-b border-border bg-paper-elevated">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+          <Link href="/" className="text-sm font-semibold text-ink-muted hover:text-primary-text">
             ← El Cuentas
           </Link>
-          <nav className="flex gap-4 text-sm">
-            <Link href="/#ranking" className="text-zinc-600 hover:text-zinc-900">
+          <nav className="flex gap-5 text-sm text-ink-muted">
+            <Link href="/#ranking" className="hover:text-ink">
               Ranking
             </Link>
-            <Link href="/metodologia" className="text-zinc-600 hover:text-zinc-900">
+            <Link href="/metodologia" className="hover:text-ink">
               Cómo lo calculamos
             </Link>
           </nav>
@@ -29,8 +29,8 @@ export default async function AlcaldiaPage({
 
       <AlcaldiaDetail slug={slug} />
 
-      <footer className="border-t border-zinc-200 bg-zinc-50">
-        <div className="mx-auto max-w-6xl px-6 py-6 text-xs text-zinc-500">
+      <footer className="border-t border-border bg-ink text-ink-inverse">
+        <div className="mx-auto max-w-6xl px-6 py-6 text-xs text-ink-inverse/70">
           El Cuentas no acusa, no opina. Sólo lee la cifra oficial y la traduce.
           Si un dato cambia en la fuente, el score cambia aquí.
         </div>
