@@ -147,21 +147,26 @@ export default function AlcaldiaDetail({ slug }: { slug: string }) {
         ))}
       </div>
 
-      {ejecucion.length > 0 && (
-        <div className="mt-10 rounded-2xl border border-border bg-paper-elevated p-6">
-          <div className="flex items-baseline justify-between">
-            <div>
-              <h3 className="text-lg font-bold text-ink">Gasto año por año</h3>
-              <p className="text-sm text-ink-muted">
-                Aprobado vs ejercido, en millones de pesos.
-              </p>
+      {ejecucion.length > 0 && (() => {
+        const hasEjercido = ejecucion.some((e) => e.ejercido != null);
+        return (
+          <div className="mt-10 rounded-2xl border border-border bg-paper-elevated p-6">
+            <div className="flex items-baseline justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-ink">Gasto año por año</h3>
+                <p className="text-sm text-ink-muted">
+                  {hasEjercido
+                    ? "Aprobado vs ejercido, en millones de pesos."
+                    : "Presupuesto aprobado, en millones de pesos. El ejercido aún no está publicado por la alcaldía."}
+                </p>
+              </div>
+              <Legend showEjercido={hasEjercido} />
             </div>
-            <Legend />
+            <BudgetChart data={ejecucion} />
+            <BudgetTable data={ejecucion} />
           </div>
-          <BudgetChart data={ejecucion} />
-          <BudgetTable data={ejecucion} />
-        </div>
-      )}
+        );
+      })()}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <NarrativeCard
@@ -203,8 +208,8 @@ export default function AlcaldiaDetail({ slug }: { slug: string }) {
         >
           datos.cdmx.gob.mx
         </a>
-        . Cifras presupuestales de muestra — serán reemplazadas con el cálculo
-        de Yuli sobre Cuenta Pública CDMX.
+        . Presupuesto aprobado oficial, 2018–2024. Cuando la alcaldía publique
+        el monto ejercido, el score se actualiza automáticamente.
       </p>
 
       <div className="mt-10">
@@ -281,33 +286,39 @@ function SubScoreCard({
   );
 }
 
-function Legend() {
+function Legend({ showEjercido }: { showEjercido: boolean }) {
   return (
     <div className="flex gap-4 text-xs text-ink-muted">
       <span className="flex items-center gap-1.5">
-        <span className="inline-block h-2 w-3 rounded-sm bg-border" />
+        <span className="inline-block h-2 w-3 rounded-sm bg-primary" />
         Aprobado
       </span>
-      <span className="flex items-center gap-1.5">
-        <span className="inline-block h-2 w-3 rounded-sm bg-primary" />
-        Ejercido
-      </span>
+      {showEjercido && (
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2 w-3 rounded-sm bg-success" />
+          Ejercido
+        </span>
+      )}
     </div>
   );
 }
 
 function BudgetChart({ data }: { data: Ejecucion[] }) {
-  const max = useMemo(
-    () => Math.max(...data.flatMap((d) => [d.aprobado, d.modificado, d.ejercido])),
-    [data]
-  );
+  const max = useMemo(() => {
+    const all = data.flatMap((d) => [
+      d.aprobado,
+      d.modificado ?? 0,
+      d.ejercido ?? 0,
+    ]);
+    return Math.max(...all, 1);
+  }, [data]);
 
   return (
     <div className="mt-5 overflow-x-auto">
       <div className="flex min-w-full items-end gap-4 px-1 pb-2">
         {data.map((d) => {
           const tasa =
-            d.modificado > 0
+            d.modificado && d.modificado > 0 && d.ejercido != null
               ? Math.round((d.ejercido / d.modificado) * 100)
               : null;
           const tasaColor =
@@ -322,15 +333,17 @@ function BudgetChart({ data }: { data: Ejecucion[] }) {
             <div key={d.anio} className="flex min-w-[56px] flex-1 flex-col items-center">
               <div className="flex h-52 w-full items-end justify-center gap-1">
                 <div
-                  className="w-5 rounded-t bg-border"
+                  className="w-5 rounded-t bg-primary"
                   style={{ height: `${(d.aprobado / max) * 100}%` }}
                   title={`Aprobado ${d.aprobado} M`}
                 />
-                <div
-                  className="w-5 rounded-t bg-primary"
-                  style={{ height: `${(d.ejercido / max) * 100}%` }}
-                  title={`Ejercido ${d.ejercido} M`}
-                />
+                {d.ejercido != null && (
+                  <div
+                    className="w-5 rounded-t bg-success"
+                    style={{ height: `${(d.ejercido / max) * 100}%` }}
+                    title={`Ejercido ${d.ejercido} M`}
+                  />
+                )}
               </div>
               <div className="mt-2 text-[11px] font-bold text-ink">{d.anio}</div>
               {tasa !== null && (
@@ -347,6 +360,7 @@ function BudgetChart({ data }: { data: Ejecucion[] }) {
 }
 
 function BudgetTable({ data }: { data: Ejecucion[] }) {
+  const na = <span className="text-ink-muted">No publicado</span>;
   return (
     <div className="mt-8 overflow-x-auto">
       <table className="w-full text-left text-sm">
@@ -362,7 +376,9 @@ function BudgetTable({ data }: { data: Ejecucion[] }) {
         <tbody className="divide-y divide-border">
           {data.map((d) => {
             const tasa =
-              d.modificado > 0 ? (d.ejercido / d.modificado) * 100 : null;
+              d.modificado && d.modificado > 0 && d.ejercido != null
+                ? (d.ejercido / d.modificado) * 100
+                : null;
             const color =
               tasa === null
                 ? "text-ink-muted"
@@ -378,10 +394,14 @@ function BudgetTable({ data }: { data: Ejecucion[] }) {
                   {d.aprobado.toLocaleString("es-MX")}
                 </td>
                 <td className="py-2 pr-4 tabular-nums">
-                  {d.modificado.toLocaleString("es-MX")}
+                  {d.modificado != null
+                    ? d.modificado.toLocaleString("es-MX")
+                    : na}
                 </td>
                 <td className="py-2 pr-4 tabular-nums">
-                  {d.ejercido.toLocaleString("es-MX")}
+                  {d.ejercido != null
+                    ? d.ejercido.toLocaleString("es-MX")
+                    : na}
                 </td>
                 <td className={`py-2 pr-4 font-bold tabular-nums ${color}`}>
                   {tasa !== null ? `${tasa.toFixed(1)}%` : "—"}

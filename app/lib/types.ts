@@ -30,8 +30,8 @@ export type Ejecucion = {
   alcaldia: string;
   anio: number;
   aprobado: number;
-  modificado: number;
-  ejercido: number;
+  modificado: number | null;
+  ejercido: number | null;
 };
 
 export function slugify(name: string): string {

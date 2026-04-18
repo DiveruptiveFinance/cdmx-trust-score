@@ -8,7 +8,7 @@ function parseNumberOrNull(v: string): number | null {
 }
 
 export async function loadScores(): Promise<AlcaldiaScore[]> {
-  const res = await fetch("/data/scores-sample.csv", { cache: "no-store" });
+  const res = await fetch("/data/scores.csv", { cache: "no-store" });
   const text = await res.text();
   const parsed = Papa.parse<Record<string, string>>(text, {
     header: true,
@@ -60,7 +60,7 @@ export async function loadTitulares(): Promise<Titular[]> {
 }
 
 export async function loadEjecucion(): Promise<Ejecucion[]> {
-  const res = await fetch("/data/ejecucion-sample.csv", { cache: "no-store" });
+  const res = await fetch("/data/ejecucion.csv", { cache: "no-store" });
   const text = await res.text();
   const parsed = Papa.parse<Record<string, string>>(text, {
     header: true,
@@ -70,7 +70,7 @@ export async function loadEjecucion(): Promise<Ejecucion[]> {
     alcaldia: r.alcaldia,
     anio: Number(r.anio),
     aprobado: Number(r.aprobado),
-    modificado: Number(r.modificado),
-    ejercido: Number(r.ejercido),
+    modificado: r.modificado === "" ? null : Number(r.modificado),
+    ejercido: r.ejercido === "" ? null : Number(r.ejercido),
   }));
 }
