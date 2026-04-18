@@ -12,7 +12,26 @@ export type AlcaldiaScore = {
 export type Hallazgo = {
   alcaldia: string;
   sexenio: string;
+  tipo: "logro" | "pendiente";
   hallazgo_narrativo: string;
+};
+
+export type Titular = {
+  alcaldia: string;
+  sexenio: string;
+  titular: string;
+  partido: string;
+  periodo_inicio: string;
+  periodo_fin: string;
+  por_confirmar: boolean;
+};
+
+export type Ejecucion = {
+  alcaldia: string;
+  anio: number;
+  aprobado: number;
+  modificado: number;
+  ejercido: number;
 };
 
 export function slugify(name: string): string {

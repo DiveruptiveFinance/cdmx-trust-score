@@ -1,5 +1,5 @@
 import Papa from "papaparse";
-import type { AlcaldiaScore, Hallazgo } from "./types";
+import type { AlcaldiaScore, Ejecucion, Hallazgo, Titular } from "./types";
 
 function parseNumberOrNull(v: string): number | null {
   if (v === "" || v === null || v === undefined) return null;
@@ -29,9 +29,48 @@ export async function loadScores(): Promise<AlcaldiaScore[]> {
 export async function loadHallazgos(): Promise<Hallazgo[]> {
   const res = await fetch("/data/hallazgos-sample.csv", { cache: "no-store" });
   const text = await res.text();
-  const parsed = Papa.parse<Hallazgo>(text, {
+  const parsed = Papa.parse<Record<string, string>>(text, {
     header: true,
     skipEmptyLines: true,
   });
-  return parsed.data;
+  return parsed.data.map((r) => ({
+    alcaldia: r.alcaldia,
+    sexenio: r.sexenio,
+    tipo: (r.tipo === "logro" ? "logro" : "pendiente") as "logro" | "pendiente",
+    hallazgo_narrativo: r.hallazgo_narrativo,
+  }));
+}
+
+export async function loadTitulares(): Promise<Titular[]> {
+  const res = await fetch("/data/titulares-sample.csv", { cache: "no-store" });
+  const text = await res.text();
+  const parsed = Papa.parse<Record<string, string>>(text, {
+    header: true,
+    skipEmptyLines: true,
+  });
+  return parsed.data.map((r) => ({
+    alcaldia: r.alcaldia,
+    sexenio: r.sexenio,
+    titular: r.titular,
+    partido: r.partido,
+    periodo_inicio: r.periodo_inicio,
+    periodo_fin: r.periodo_fin,
+    por_confirmar: r.por_confirmar === "true",
+  }));
+}
+
+export async function loadEjecucion(): Promise<Ejecucion[]> {
+  const res = await fetch("/data/ejecucion-sample.csv", { cache: "no-store" });
+  const text = await res.text();
+  const parsed = Papa.parse<Record<string, string>>(text, {
+    header: true,
+    skipEmptyLines: true,
+  });
+  return parsed.data.map((r) => ({
+    alcaldia: r.alcaldia,
+    anio: Number(r.anio),
+    aprobado: Number(r.aprobado),
+    modificado: Number(r.modificado),
+    ejercido: Number(r.ejercido),
+  }));
 }

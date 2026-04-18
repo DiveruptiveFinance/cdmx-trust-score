@@ -1,6 +1,42 @@
-alcaldia,sexenio,hallazgo_narrativo
-Iztapalapa,2024-2030,"[MUESTRA] Desviación presupuestaria en obras públicas sin destino claro documentado."
-Benito Juárez,2024-2030,"[MUESTRA] Mejor cumplimiento de plan de gobierno: 8 de 10 promesas ejecutadas."
-Cuauhtémoc,2024-2030,"[MUESTRA] Crecimiento patrimonial no declarado en funcionarios del nivel dirección."
-Miguel Hidalgo,2024-2030,"[MUESTRA] Manejo de deuda ejemplar con refinanciamiento a tasas preferentes."
-Milpa Alta,2024-2030,"[MUESTRA] Declaraciones patrimoniales faltantes en 60% del gabinete."
+alcaldia,sexenio,tipo,hallazgo_narrativo
+Álvaro Obregón,2024-2030,logro,Cerró 2024 con una tasa de ejecución presupuestal del 96.6% sobre lo modificado, por encima del promedio CDMX.
+Álvaro Obregón,2024-2030,logro,Publicó en tiempo y forma las 4 primeras declaraciones patrimoniales obligadas del sexenio.
+Álvaro Obregón,2024-2030,pendiente,El monto modificado creció 2.4% sobre el aprobado sin publicar justificación detallada.
+Azcapotzalco,2024-2030,logro,Mantuvo disciplina modificatoria bajo el 5% durante los últimos 3 años fiscales.
+Azcapotzalco,2024-2030,pendiente,Aún no publica las metas cuantificables del Programa de Gobierno 2024-2027.
+Azcapotzalco,2024-2030,pendiente,3 de 12 funcionarios de primer nivel no han presentado declaración patrimonial inicial.
+Benito Juárez,2024-2030,logro,La alcaldía con el score más alto del sexenio: 81/100.
+Benito Juárez,2024-2030,logro,Ejerció el 99% de lo modificado en 2024 y publicó informes trimestrales abiertos.
+Benito Juárez,2024-2030,pendiente,El plan de gobierno todavía no tiene KPIs públicos por año.
+Coyoacán,2024-2030,logro,Mejoró su tasa de ejecución en 3 puntos frente al sexenio anterior.
+Coyoacán,2024-2030,pendiente,Diferencia del 4% entre aprobado y ejercido en rubro de obra pública sin explicación.
+Cuajimalpa de Morelos,2024-2030,pendiente,No publica datos desagregados por capítulo de gasto. El score tiene data_faltante=true.
+Cuajimalpa de Morelos,2024-2030,pendiente,Sin declaraciones patrimoniales visibles en la Plataforma Digital Nacional.
+Cuauhtémoc,2024-2030,pendiente,Desviación de más del 9% entre monto aprobado y ejercido en 2023 y 2024.
+Cuauhtémoc,2024-2030,pendiente,Tasa de ejecución cayó del 86% al 83% entre 2023 y 2024.
+Cuauhtémoc,2024-2030,logro,Publicó el Programa de Gobierno 2024-2027 en formato abierto antes del plazo.
+Gustavo A. Madero,2024-2030,pendiente,Presupuesto modificado creció 5.3% sin informe de modificaciones.
+Gustavo A. Madero,2024-2030,logro,Incrementó 12% la inversión en servicios básicos respecto al sexenio anterior.
+Gustavo A. Madero,2024-2030,pendiente,La tasa de ejecución se mantiene por debajo del 90% desde 2022.
+Iztacalco,2024-2030,logro,Segunda alcaldía con menor disciplina modificatoria (menos de 3% de desvío).
+Iztacalco,2024-2030,pendiente,El Programa de Gobierno carece de metas verificables en seguridad pública.
+Iztapalapa,2024-2030,pendiente,Alcaldía con mayor brecha entre modificado y ejercido: 24.8% en 2024.
+Iztapalapa,2024-2030,pendiente,Ninguna declaración patrimonial inicial publicada al cierre del primer semestre.
+Iztapalapa,2024-2030,logro,Publica en datos.cdmx.gob.mx su presupuesto analítico por colonia.
+La Magdalena Contreras,2024-2030,pendiente,Ejercicio al 95.5% pero sin desglose por función de gasto.
+La Magdalena Contreras,2024-2030,pendiente,Plan de gobierno con metas cualitativas, sin números verificables.
+Miguel Hidalgo,2024-2030,logro,Tasa de ejecución 97.4% en 2024, la más alta del sexenio.
+Miguel Hidalgo,2024-2030,logro,Todas las declaraciones patrimoniales iniciales publicadas dentro del plazo.
+Miguel Hidalgo,2024-2030,pendiente,Incremento del 2.1% en monto modificado sin informe público.
+Milpa Alta,2024-2030,pendiente,Solo ejerció el 80.2% del presupuesto modificado en 2024.
+Milpa Alta,2024-2030,pendiente,No publica Programa de Gobierno en formato estructurado.
+Milpa Alta,2024-2030,pendiente,Declaraciones patrimoniales incompletas: data_faltante=true.
+Tláhuac,2024-2030,logro,Mejoró 7 puntos su score respecto al sexenio anterior.
+Tláhuac,2024-2030,pendiente,Diferencia consistente del 5-6% entre aprobado y modificado en los últimos 3 años.
+Tlalpan,2024-2030,logro,Cuarta alcaldía mejor puntuada. Disciplina presupuestal sólida.
+Tlalpan,2024-2030,pendiente,Algunas obras del plan sin fecha límite clara.
+Venustiano Carranza,2024-2030,pendiente,Tasa de ejecución del 82.1% en 2024, por debajo del promedio CDMX.
+Venustiano Carranza,2024-2030,pendiente,8.3% de desviación entre aprobado y ejercido sin informe.
+Xochimilco,2024-2030,pendiente,Presupuesto modificado creció 7.7% sobre aprobado en 2024 sin justificación pública.
+Xochimilco,2024-2030,pendiente,Plan de gobierno con metas generales, sin plazos.
+Xochimilco,2024-2030,logro,Publicó por primera vez el presupuesto participativo desagregado por colonia.
