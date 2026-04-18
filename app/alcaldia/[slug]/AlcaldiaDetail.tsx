@@ -162,6 +162,7 @@ export default function AlcaldiaDetail({ slug }: { slug: string }) {
               </div>
               <Legend showEjercido={hasEjercido} />
             </div>
+            <BudgetStats data={ejecucion} />
             <BudgetChart data={ejecucion} />
             <BudgetTable data={ejecucion} />
           </div>
@@ -303,6 +304,59 @@ function Legend({ showEjercido }: { showEjercido: boolean }) {
   );
 }
 
+function BudgetStats({ data }: { data: Ejecucion[] }) {
+  const aprobados = data.map((d) => d.aprobado);
+  const total = aprobados.reduce((a, b) => a + b, 0);
+  const promedio = Math.round(total / aprobados.length);
+  const pico = data.reduce((a, b) => (a.aprobado > b.aprobado ? a : b));
+  const first = aprobados[0] ?? 0;
+  const last = aprobados[aprobados.length - 1] ?? 0;
+  const crecimiento = first > 0 ? Math.round(((last - first) / first) * 100) : 0;
+  const creceColor =
+    crecimiento > 0 ? "text-success-text" : crecimiento < 0 ? "text-danger-text" : "text-ink-muted";
+
+  const fmt = (n: number) =>
+    n.toLocaleString("es-MX", { maximumFractionDigits: 0 });
+
+  return (
+    <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <StatBlock label="Total sexenio" value={`$${fmt(total)} M`} sub="Presupuesto acumulado" />
+      <StatBlock label="Promedio anual" value={`$${fmt(promedio)} M`} sub="Por año" />
+      <StatBlock label="Año pico" value={`${pico.anio}`} sub={`$${fmt(pico.aprobado)} M`} />
+      <StatBlock
+        label="Crecimiento"
+        value={`${crecimiento > 0 ? "+" : ""}${crecimiento}%`}
+        sub={`${data[0].anio} → ${data[data.length - 1].anio}`}
+        valueClass={creceColor}
+      />
+    </div>
+  );
+}
+
+function StatBlock({
+  label,
+  value,
+  sub,
+  valueClass = "text-ink",
+}: {
+  label: string;
+  value: string;
+  sub: string;
+  valueClass?: string;
+}) {
+  return (
+    <div className="rounded-xl border border-border bg-paper p-3">
+      <div className="text-[10px] font-bold uppercase tracking-widest text-ink-muted">
+        {label}
+      </div>
+      <div className={`mt-1 text-xl font-bold tabular-nums ${valueClass}`}>
+        {value}
+      </div>
+      <div className="text-[11px] text-ink-muted">{sub}</div>
+    </div>
+  );
+}
+
 function BudgetChart({ data }: { data: Ejecucion[] }) {
   const max = useMemo(() => {
     const all = data.flatMap((d) => [
@@ -313,10 +367,36 @@ function BudgetChart({ data }: { data: Ejecucion[] }) {
     return Math.max(...all, 1);
   }, [data]);
 
+  const promedio = useMemo(
+    () => data.reduce((a, b) => a + b.aprobado, 0) / data.length,
+    [data]
+  );
+  const promedioPct = (promedio / max) * 100;
+
   return (
-    <div className="mt-5 overflow-x-auto">
-      <div className="flex min-w-full items-end gap-4 px-1 pb-2">
-        {data.map((d) => {
+    <div className="mt-6 overflow-x-auto">
+      <div className="relative flex min-w-full items-end gap-4 px-1 pb-2">
+        <div
+          className="pointer-events-none absolute left-0 right-0 flex items-center"
+          style={{ bottom: `${promedioPct}%` }}
+        >
+          <div className="h-px flex-1 border-t border-dashed border-accent/70" />
+          <span className="ml-2 rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent-text">
+            Promedio ${Math.round(promedio).toLocaleString("es-MX")} M
+          </span>
+        </div>
+        {data.map((d, i) => {
+          const prev = i > 0 ? data[i - 1].aprobado : null;
+          const delta =
+            prev && prev > 0 ? Math.round(((d.aprobado - prev) / prev) * 100) : null;
+          const deltaColor =
+            delta === null
+              ? "text-ink-muted"
+              : delta > 0
+                ? "text-success-text"
+                : delta < 0
+                  ? "text-danger-text"
+                  : "text-ink-muted";
           const tasa =
             d.modificado && d.modificado > 0 && d.ejercido != null
               ? Math.round((d.ejercido / d.modificado) * 100)
@@ -330,22 +410,31 @@ function BudgetChart({ data }: { data: Ejecucion[] }) {
                   ? "text-accent-text"
                   : "text-danger-text";
           return (
-            <div key={d.anio} className="flex min-w-[56px] flex-1 flex-col items-center">
-              <div className="flex h-52 w-full items-end justify-center gap-1">
+            <div key={d.anio} className="flex min-w-[64px] flex-1 flex-col items-center">
+              <div className="flex h-56 w-full items-end justify-center gap-1">
                 <div
-                  className="w-5 rounded-t bg-primary"
+                  className="group relative w-6 rounded-t bg-primary transition hover:bg-primary-light"
                   style={{ height: `${(d.aprobado / max) * 100}%` }}
-                  title={`Aprobado ${d.aprobado} M`}
-                />
+                >
+                  <span className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 rounded bg-ink px-1.5 py-0.5 text-[10px] font-bold text-ink-inverse opacity-0 transition group-hover:opacity-100">
+                    ${d.aprobado.toLocaleString("es-MX")}M
+                  </span>
+                </div>
                 {d.ejercido != null && (
                   <div
-                    className="w-5 rounded-t bg-success"
+                    className="w-6 rounded-t bg-success"
                     style={{ height: `${(d.ejercido / max) * 100}%` }}
                     title={`Ejercido ${d.ejercido} M`}
                   />
                 )}
               </div>
               <div className="mt-2 text-[11px] font-bold text-ink">{d.anio}</div>
+              {delta !== null && (
+                <div className={`text-[10px] font-semibold ${deltaColor}`}>
+                  {delta > 0 ? "+" : ""}
+                  {delta}%
+                </div>
+              )}
               {tasa !== null && (
                 <div className={`text-[10px] font-semibold ${tasaColor}`}>
                   {tasa}%
