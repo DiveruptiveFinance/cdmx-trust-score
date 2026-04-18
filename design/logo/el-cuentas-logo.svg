@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" width="960" height="320">
+  <!-- Concepto A — Monograma wordmark "El Cuentas" -->
+  <!-- Fondo crema papel -->
+  <rect width="960" height="320" fill="#FFFCF5"/>
+
+  <!-- Grid guía (invisible en export, se mantiene claro) -->
+  <!-- Wordmark principal -->
+  <g font-family="Fraunces, 'Playfair Display', Georgia, serif">
+    <!-- "El " pequeño -->
+    <text x="120" y="195"
+          font-size="64"
+          font-weight="500"
+          font-style="italic"
+          fill="#1A1A1A"
+          letter-spacing="-1">El</text>
+
+    <!-- "Cuentas" grande -->
+    <text x="220" y="200"
+          font-size="130"
+          font-weight="800"
+          fill="#1A1A1A"
+          letter-spacing="-5">Cuentas</text>
+
+    <!-- Acento rosa mexicano: subrayado decorativo bajo la "C" -->
+    <path d="M 230 225 Q 260 242 295 225"
+          stroke="#D62987"
+          stroke-width="8"
+          fill="none"
+          stroke-linecap="round"/>
+
+    <!-- Punto rosa mexicano (el "detalle signature") -->
+    <circle cx="830" cy="145" r="10" fill="#D62987"/>
+  </g>
+
+  <!-- Tagline opcional en Inter -->
+  <text x="120" y="260"
+        font-family="Inter, system-ui, sans-serif"
+        font-size="22"
+        font-weight="500"
+        fill="#1A1A1A"
+        letter-spacing="4"
+        opacity="0.72">EL SABIO DEL PRESUPUESTO · CDMX</text>
+</svg>
