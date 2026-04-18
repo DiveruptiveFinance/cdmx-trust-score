@@ -1,0 +1,21 @@
+{
+  "name": "el-cuentas-video",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "remotion studio",
+    "build": "remotion render video out/elcuentas-2min.mp4 --concurrency=4"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.263",
+    "@remotion/google-fonts": "4.0.263",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.263"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "typescript": "5.5.3"
+  }
+}
