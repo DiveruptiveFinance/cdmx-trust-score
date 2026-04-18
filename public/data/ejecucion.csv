@@ -1,103 +1,113 @@
 alcaldia,anio,aprobado,modificado,ejercido
-Azcapotzalco,2018,1841,,
-Azcapotzalco,2019,1929,,
-Azcapotzalco,2020,1965,,
-Azcapotzalco,2021,1792,,
-Azcapotzalco,2022,1938,,
-Azcapotzalco,2023,2095,,
-Azcapotzalco,2024,2259,,
-Benito Juárez,2018,2215,,
-Benito Juárez,2019,2254,,
-Benito Juárez,2020,2307,,
-Benito Juárez,2021,2104,,
-Benito Juárez,2022,2264,,
-Benito Juárez,2023,2373,,
-Benito Juárez,2024,2559,,
-Coyoacán,2018,2701,,
-Coyoacán,2019,2833,,
-Coyoacán,2020,2889,,
-Coyoacán,2021,2635,,
-Coyoacán,2022,2845,,
-Coyoacán,2023,2982,,
-Coyoacán,2024,3217,,
-Cuajimalpa de Morelos,2023,1894,,
-Cuajimalpa de Morelos,2024,2043,,
-Cuauhtémoc,2018,3235,,
-Cuauhtémoc,2019,3361,,
-Cuauhtémoc,2020,3417,,
-Cuauhtémoc,2021,3116,,
-Cuauhtémoc,2022,3376,,
-Cuauhtémoc,2023,3538,,
-Cuauhtémoc,2024,3817,,
-Gustavo A. Madero,2018,4445,,
-Gustavo A. Madero,2019,4774,,
-Gustavo A. Madero,2020,4884,,
-Gustavo A. Madero,2021,4455,,
-Gustavo A. Madero,2022,4795,,
-Gustavo A. Madero,2023,5025,,
-Gustavo A. Madero,2024,5421,,
-Iztacalco,2018,1977,,
-Iztacalco,2019,2031,,
-Iztacalco,2020,2074,,
-Iztacalco,2021,1892,,
-Iztacalco,2022,2040,,
-Iztacalco,2023,2202,,
-Iztacalco,2024,2375,,
-Iztapalapa,2018,5380,,
-Iztapalapa,2019,5853,,
-Iztapalapa,2020,6012,,
-Iztapalapa,2021,5483,,
-Iztapalapa,2022,5879,,
-Iztapalapa,2023,6162,,
-Iztapalapa,2024,6647,,
-La Magdalena Contreras,2023,1853,,
-La Magdalena Contreras,2024,1999,,
-Miguel Hidalgo,2018,2348,,
-Miguel Hidalgo,2019,2430,,
-Miguel Hidalgo,2020,2472,,
-Miguel Hidalgo,2021,2255,,
-Miguel Hidalgo,2022,2441,,
-Miguel Hidalgo,2023,2558,,
-Miguel Hidalgo,2024,2759,,
-Milpa Alta,2018,1353,,
-Milpa Alta,2019,1452,,
-Milpa Alta,2020,1477,,
-Milpa Alta,2021,1347,,
-Milpa Alta,2022,1458,,
-Milpa Alta,2023,1635,,
-Milpa Alta,2024,1763,,
-Tlalpan,2018,2443,,
-Tlalpan,2019,2694,,
-Tlalpan,2020,2770,,
-Tlalpan,2021,2526,,
-Tlalpan,2022,2706,,
-Tlalpan,2023,2887,,
-Tlalpan,2024,3114,,
-Tláhuac,2018,1642,,
-Tláhuac,2019,1720,,
-Tláhuac,2020,1754,,
-Tláhuac,2021,1600,,
-Tláhuac,2022,1728,,
-Tláhuac,2023,1917,,
-Tláhuac,2024,2068,,
-Venustiano Carranza,2018,2781,,
-Venustiano Carranza,2019,2796,,
-Venustiano Carranza,2020,2834,,
-Venustiano Carranza,2021,2585,,
-Venustiano Carranza,2022,2809,,
-Venustiano Carranza,2023,2944,,
-Venustiano Carranza,2024,3176,,
-Xochimilco,2018,1921,,
-Xochimilco,2019,2057,,
-Xochimilco,2020,2109,,
-Xochimilco,2021,1923,,
-Xochimilco,2022,2066,,
-Xochimilco,2023,2229,,
-Xochimilco,2024,2404,,
-Álvaro Obregón,2018,2974,,
-Álvaro Obregón,2019,3197,,
-Álvaro Obregón,2020,3272,,
-Álvaro Obregón,2021,2985,,
-Álvaro Obregón,2022,3212,,
-Álvaro Obregón,2023,3366,,
-Álvaro Obregón,2024,3631,,
+Álvaro Obregón,2018,,,2605
+Álvaro Obregón,2019,3198,,3156
+Álvaro Obregón,2020,,,2893
+Álvaro Obregón,2021,2985,,2935
+Álvaro Obregón,2022,3212,,3160
+Álvaro Obregón,2023,3366,,3408
+Álvaro Obregón,2024,3631,,3675
+Azcapotzalco,2018,,,1853
+Azcapotzalco,2019,1929,,1905
+Azcapotzalco,2020,,,1630
+Azcapotzalco,2021,1792,,1739
+Azcapotzalco,2022,1938,,1890
+Azcapotzalco,2023,2094,,2112
+Azcapotzalco,2024,2259,,2283
+Benito Juárez,2018,,,2508
+Benito Juárez,2019,2254,,2366
+Benito Juárez,2020,,,2167
+Benito Juárez,2021,2104,,2147
+Benito Juárez,2022,2264,,2335
+Benito Juárez,2023,2373,,2409
+Benito Juárez,2024,2559,,2619
+Coyoacán,2018,,,2974
+Coyoacán,2019,2833,,2737
+Coyoacán,2020,,,2509
+Coyoacán,2021,2635,,2580
+Coyoacán,2022,2845,,2857
+Coyoacán,2023,2982,,3053
+Coyoacán,2024,3217,,3318
+Cuajimalpa de Morelos,2018,,,1867
+Cuajimalpa de Morelos,2019,1738,,1733
+Cuajimalpa de Morelos,2020,,,1584
+Cuajimalpa de Morelos,2021,1602,,1591
+Cuajimalpa de Morelos,2022,1746,,1754
+Cuajimalpa de Morelos,2023,1894,,1971
+Cuajimalpa de Morelos,2024,2043,,2076
+Cuauhtémoc,2018,,,3426
+Cuauhtémoc,2019,3361,,3356
+Cuauhtémoc,2020,,,3041
+Cuauhtémoc,2021,3116,,3088
+Cuauhtémoc,2022,3376,,3334
+Cuauhtémoc,2023,3300,,3610
+Cuauhtémoc,2024,3817,,3837
+Gustavo A. Madero,2018,,,4337
+Gustavo A. Madero,2019,4774,,4907
+Gustavo A. Madero,2020,,,4447
+Gustavo A. Madero,2021,4454,,4552
+Gustavo A. Madero,2022,4795,,4884
+Gustavo A. Madero,2023,4800,,5100
+Gustavo A. Madero,2024,5421,,5367
+Iztacalco,2018,,,2201
+Iztacalco,2019,2031,,2088
+Iztacalco,2020,,,1911
+Iztacalco,2021,1892,,1910
+Iztacalco,2022,2040,,2085
+Iztacalco,2023,2200,,2266
+Iztacalco,2024,2375,,2431
+Iztapalapa,2018,,,5624
+Iztapalapa,2019,5853,,6003
+Iztapalapa,2020,,,5477
+Iztapalapa,2021,5483,,5477
+Iztapalapa,2022,5880,,5987
+Iztapalapa,2023,6100,,6220
+Iztapalapa,2024,6647,,6584
+La Magdalena Contreras,2018,,,1688
+La Magdalena Contreras,2019,1699,,1616
+La Magdalena Contreras,2020,,,1520
+La Magdalena Contreras,2021,1574,,1492
+La Magdalena Contreras,2022,1707,,1666
+La Magdalena Contreras,2023,1853,,1856
+La Magdalena Contreras,2024,1999,,1920
+Miguel Hidalgo,2018,,,2357
+Miguel Hidalgo,2019,2430,,2441
+Miguel Hidalgo,2020,,,2354
+Miguel Hidalgo,2021,2255,,2276
+Miguel Hidalgo,2022,2441,,2275
+Miguel Hidalgo,2023,2558,,2586
+Miguel Hidalgo,2024,2760,,2797
+Milpa Alta,2018,,,1399
+Milpa Alta,2019,1452,,1460
+Milpa Alta,2020,,,1336
+Milpa Alta,2021,1347,,1303
+Milpa Alta,2022,1458,,1437
+Milpa Alta,2023,1635,,1654
+Milpa Alta,2024,1763,,1780
+Tláhuac,2018,,,1876
+Tláhuac,2019,1720,,1718
+Tláhuac,2020,,,1581
+Tláhuac,2021,1600,,1571
+Tláhuac,2022,1728,,1732
+Tláhuac,2023,1917,,1966
+Tláhuac,2024,2068,,2127
+Tlalpan,2018,,,2340
+Tlalpan,2019,2694,,2574
+Tlalpan,2020,,,2445
+Tlalpan,2021,2526,,2503
+Tlalpan,2022,2706,,2776
+Tlalpan,2023,2887,,2983
+Tlalpan,2024,3114,,3150
+Venustiano Carranza,2018,,,3004
+Venustiano Carranza,2019,2796,,2878
+Venustiano Carranza,2020,,,2582
+Venustiano Carranza,2021,2585,,2546
+Venustiano Carranza,2022,2809,,2815
+Venustiano Carranza,2023,2944,,3001
+Venustiano Carranza,2024,3176,,3255
+Xochimilco,2018,,,1963
+Xochimilco,2019,2057,,1996
+Xochimilco,2020,,,1915
+Xochimilco,2021,1923,,1921
+Xochimilco,2022,2066,,2069
+Xochimilco,2023,2229,,2260
+Xochimilco,2024,2404,,2396

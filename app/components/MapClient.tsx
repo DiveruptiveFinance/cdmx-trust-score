@@ -1,22 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import type { Feature, FeatureCollection, Geometry } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 import { loadScores } from "../lib/loadData";
-import { scoreColor } from "../lib/types";
+import { scoreColor, slugify } from "../lib/types";
 import type { AlcaldiaScore } from "../lib/types";
-import AlcaldiaDrawer from "./AlcaldiaDrawer";
 
 const CDMX_CENTER: [number, number] = [19.3909, -99.1436];
 
 export default function MapClient() {
+  const router = useRouter();
   const [geo, setGeo] = useState<FeatureCollection | null>(null);
   const [scoresByName, setScoresByName] = useState<Record<string, AlcaldiaScore>>({});
-  const [activeAlcaldia, setActiveAlcaldia] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -56,7 +56,7 @@ export default function MapClient() {
         target.setStyle({ weight: 1.5, color: "#FFFCF5", fillOpacity: 0.82 });
       },
       click: () => {
-        setActiveAlcaldia(name);
+        router.push(`/alcaldia/${slugify(name)}`);
       },
     });
     if (layer.bindTooltip) {
@@ -68,7 +68,6 @@ export default function MapClient() {
   };
 
   return (
-    <>
     <div className="relative h-[600px] w-full overflow-hidden rounded-2xl border border-border shadow-sm">
       <MapContainer
         center={CDMX_CENTER}
@@ -111,10 +110,5 @@ export default function MapClient() {
         </div>
       </div>
     </div>
-    <AlcaldiaDrawer
-      alcaldia={activeAlcaldia}
-      onClose={() => setActiveAlcaldia(null)}
-    />
-    </>
   );
 }

@@ -27,7 +27,7 @@ export async function loadScores(): Promise<AlcaldiaScore[]> {
 }
 
 export async function loadHallazgos(): Promise<Hallazgo[]> {
-  const res = await fetch("/data/hallazgos-sample.csv", { cache: "no-store" });
+  const res = await fetch("/data/hallazgos.csv", { cache: "no-store" });
   const text = await res.text();
   const parsed = Papa.parse<Record<string, string>>(text, {
     header: true,
