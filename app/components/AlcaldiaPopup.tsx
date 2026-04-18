@@ -133,13 +133,13 @@ export default function AlcaldiaPopup({
       <div
         onClick={onClose}
         aria-hidden="true"
-        className={`fixed inset-0 z-[150] backdrop-blur-[6px] transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[9998] backdrop-blur-[6px] transition-opacity duration-300 ${
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         style={{ background: "rgba(26,26,26,0.15)" }}
       />
       <div
-        className={`fixed inset-0 z-[160] flex items-center justify-center overflow-y-auto px-4 py-6 transition-opacity duration-300 sm:py-10 ${
+        className={`fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto px-4 py-6 transition-opacity duration-300 sm:py-10 ${
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
