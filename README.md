@@ -1,6 +1,10 @@
-# CDMX Trust Score
+# El Cuentas · CDMX Trust Score
 
-Plataforma open source + agente de IA para medir la **transparencia y confiabilidad** de las 16 alcaldías de CDMX.
+> **Sitio en vivo:** [cdmx-trust-score.vercel.app](https://cdmx-trust-score.vercel.app)
+
+Plataforma open source + agente de IA que mide la **transparencia presupuestal** de las 16 alcaldías de la CDMX.
+
+El Trust Score es un número del 0 al 100 que resume qué tan parecido fue lo que cada alcaldía *ejerció* a lo que *aprobó*, usando exclusivamente la Cuenta Pública oficial 2018–2024.
 
 Construido en el **Claude Impact Lab CDMX** — sábado 18 de abril de 2026.
 
@@ -73,5 +77,8 @@ README.md          ← Este archivo
 
 ## URL pública
 
-- **Desarrollo:** _pendiente_ (se actualiza al desplegar)
-- **Producción:** _pendiente_
+- **Producción:** https://cdmx-trust-score.vercel.app
+- **Metodología:** https://cdmx-trust-score.vercel.app/metodologia
+- **Repo:** https://github.com/DiveruptiveFinance/cdmx-trust-score
+
+Cada push a `main` dispara un redeploy automático en Vercel.
