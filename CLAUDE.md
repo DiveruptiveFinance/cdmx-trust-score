@@ -8,7 +8,7 @@ Este archivo es el contexto del proyecto para **cualquier IA o agente** que ayud
 
 Estamos construyendo una **plataforma open source + agente de IA** para el **Claude Impact Lab CDMX** (sábado 18 de abril de 2026, build time 5-6 horas).
 
-**Nombre del producto:** pendiente (lo define la marketera).
+**Nombre del producto:** pendiente (lo define Wendy).
 
 **Track elegido:** 💰 Follow the Money (puro).
 
@@ -27,8 +27,8 @@ Estamos construyendo una **plataforma open source + agente de IA** para el **Cla
 | Persona | Rol | Artefactos que produce |
 |---------|-----|-----------------------|
 | **Magni** (Jorge) | Product + Build (infra, código, integración) | Repo Next.js, mapa, widget agente, deploy Vercel |
-| **Financiera** | Datos + Score | `data/scores.csv`, `data/hallazgos.csv`, `data/metodologia.md` |
-| **Marketera** | UI + Pitch | `design/logo.svg`, `design/paleta.md`, `design/wireframe.png`, `copy/textos.md`, `copy/pitch.md` |
+| **Yuli** | Datos + Score | `data/scores.csv`, `data/hallazgos.csv`, `data/metodologia.md` |
+| **Wendy** | UI + Pitch | `design/logo.svg`, `design/paleta.md`, `design/wireframe.png`, `copy/textos.md`, `copy/pitch.md` |
 
 ---
 
@@ -50,7 +50,7 @@ Estamos construyendo una **plataforma open source + agente de IA** para el **Cla
 - **Unidad:** alcaldías + sus titulares (un alcalde hereda el score de su alcaldía en su periodo).
 - **Componentes:** los 4 mencionados arriba.
 - **Presentación:** número **0-100** + breakdown por componente.
-- **Ponderación:** PENDIENTE — la financiera decide después de explorar los datos.
+- **Ponderación:** PENDIENTE — Yuli decide después de explorar los datos.
 - **Cobertura:** las **16 alcaldías**.
 - **Ventana temporal:** **últimos 3 sexenios** (nota: alcaldías como tales existen desde 2018, antes eran delegaciones — tratarlas como continuidad).
 - **Data faltante:** marcar N.A. + flag visible, NO penalizar con 0.
@@ -91,7 +91,7 @@ Estamos construyendo una **plataforma open source + agente de IA** para el **Cla
 ## Reglas duras
 
 1. **No inventar datos.** Si falta, marcar N.A. o preguntar a Magni.
-2. **Respetar esquemas de CSV** (columnas exactas — ver `BRIEF-FINANCIERA.md`).
+2. **Respetar esquemas de CSV** (columnas exactas — ver `BRIEF-YULI.md`).
 3. **El mapa es más importante que el agente.** Si hay que recortar, el agente va primero.
 4. **Open source desde minuto 1.** Todo se commitea al repo. Nada en carpetas privadas.
 5. **Enlaces a fuentes originales** siempre visibles (defensa legal + credibilidad).
@@ -100,9 +100,9 @@ Estamos construyendo una **plataforma open source + agente de IA** para el **Cla
 
 ## Pendientes (se resuelven durante el build)
 
-- [ ] Nombre final del producto (marketera)
-- [ ] Ponderación exacta del score (financiera, post-exploración de datos)
-- [ ] ¿Plan de gobierno es data disponible o hay que scrape? (financiera explora)
+- [ ] Nombre final del producto (Wendy)
+- [ ] Ponderación exacta del score (Yuli, post-exploración de datos)
+- [ ] ¿Plan de gobierno es data disponible o hay que scrape? (Yuli explora)
 - [ ] ¿Bilingüe? (idioma final)
 - [ ] URL final de Vercel
 
@@ -110,14 +110,14 @@ Estamos construyendo una **plataforma open source + agente de IA** para el **Cla
 
 ## Cómo contribuye cada persona (para los agentes que las asisten)
 
-### Si asistes a la financiera
+### Si asistes a Yuli
 - Su output es **datos**, no código.
 - Ayúdala a limpiar CSVs de datos.cdmx.gob.mx.
 - Ayúdala a definir una fórmula simple y defendible para el score.
-- Respeta el esquema de `BRIEF-FINANCIERA.md`.
+- Respeta el esquema de `BRIEF-YULI.md`.
 - NO sugieras cambios a la UI o al pitch.
 
-### Si asistes a la marketera
+### Si asistes a Wendy
 - Su output es **diseño + copy**, no código.
 - Ayúdala con logos (SVG), paletas accesibles, wireframes, copy claro.
 - El vibe es "amigable ciudadano", no corporate ni institucional.

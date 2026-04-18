@@ -8,9 +8,9 @@ Construido en el **Claude Impact Lab CDMX** — sábado 18 de abril de 2026.
 
 ## Para el equipo (guía no-técnica)
 
-### 📌 Si eres la financiera
+### 📌 Si eres Yuli
 
-Tu casa es la carpeta **`/data`**. Lee **`BRIEF-FINANCIERA.md`** primero.
+Tu casa es la carpeta **`/data`**. Lee **`BRIEF-YULI.md`** primero.
 
 **Cómo subir un archivo:**
 1. Entra al repo en GitHub (el link que te pasó Magni).
@@ -22,9 +22,9 @@ Tu casa es la carpeta **`/data`**. Lee **`BRIEF-FINANCIERA.md`** primero.
 
 Listo. Ya está en el repo.
 
-### 📌 Si eres la marketera
+### 📌 Si eres Wendy
 
-Tu casa son las carpetas **`/design`** y **`/copy`**. Lee **`BRIEF-MARKETERA.md`** primero.
+Tu casa son las carpetas **`/design`** y **`/copy`**. Lee **`BRIEF-WENDY.md`** primero.
 
 **Cómo subir archivos:** igual que arriba, pero en la carpeta que toque.
 
@@ -48,13 +48,13 @@ Tu casa son las carpetas **`/design`** y **`/copy`**. Lee **`BRIEF-MARKETERA.md`
 ```
 /app               ← Código Next.js (solo Magni)
 /public            ← Imágenes y CSVs servidos al navegador
-  /data            ← CSVs que genera la financiera (montados aquí)
-  /design          ← Assets que genera la marketera (montados aquí)
-/data              ← Archivos fuente de la financiera (CSVs, .md)
-/design            ← Archivos fuente de la marketera (logo, paleta)
+  /data            ← CSVs que genera Yuli (montados aquí)
+  /design          ← Assets que genera Wendy (montados aquí)
+/data              ← Archivos fuente de Yuli (CSVs, .md)
+/design            ← Archivos fuente de Wendy (logo, paleta)
 /copy              ← Textos del sitio y pitch
-BRIEF-FINANCIERA.md
-BRIEF-MARKETERA.md
+BRIEF-YULI.md
+BRIEF-WENDY.md
 CLAUDE.md          ← Contexto del proyecto para IAs
 README.md          ← Este archivo
 ```

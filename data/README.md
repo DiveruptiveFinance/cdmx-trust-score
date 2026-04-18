@@ -1,8 +1,8 @@
-# /data — Carpeta de la financiera
+# /data — Carpeta de Yuli
 
 Sube aquí:
 - `scores.csv`
 - `hallazgos.csv`
 - `metodologia.md`
 
-Formato exacto en `/BRIEF-FINANCIERA.md` (carpeta raíz).
+Formato exacto en `/BRIEF-YULI.md` (carpeta raíz).

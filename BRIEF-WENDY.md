@@ -1,4 +1,4 @@
-# Brief — Marketera (UI + Pitch)
+# Brief — Wendy (UI + Pitch)
 
 **Tu rol:** Diseño de la plataforma + pitch de 2 minutos.
 

@@ -1,4 +1,4 @@
-# Brief — Financiera (Datos + Trust Score)
+# Brief — Yuli (Datos + Trust Score)
 
 **Tu rol:** Calcular el **Trust Score 0-100** para las 16 alcaldías de CDMX, en los últimos 3 sexenios.
 
