@@ -1,5 +1,5 @@
 import Papa from "papaparse";
-import type { AlcaldiaScore, Ejecucion, Hallazgo, Titular } from "./types";
+import type { AlcaldiaScore, Ejecucion, Hallazgo, ScoreByYear, Titular } from "./types";
 
 function parseNumberOrNull(v: string): number | null {
   if (v === "" || v === null || v === undefined) return null;
@@ -69,8 +69,27 @@ export async function loadEjecucion(): Promise<Ejecucion[]> {
   return parsed.data.map((r) => ({
     alcaldia: r.alcaldia,
     anio: Number(r.anio),
-    aprobado: Number(r.aprobado),
+    aprobado: r.aprobado === "" ? null : Number(r.aprobado),
     modificado: r.modificado === "" ? null : Number(r.modificado),
     ejercido: r.ejercido === "" ? null : Number(r.ejercido),
+  }));
+}
+
+export async function loadScoresByYear(): Promise<ScoreByYear[]> {
+  const res = await fetch("/data/scores-by-year.csv", { cache: "no-store" });
+  const text = await res.text();
+  const parsed = Papa.parse<Record<string, string>>(text, {
+    header: true,
+    skipEmptyLines: true,
+  });
+  return parsed.data.map((r) => ({
+    alcaldia: r.alcaldia,
+    anio: Number(r.anio),
+    score_total: parseNumberOrNull(r.score_total),
+    score_presupuesto: parseNumberOrNull(r.score_presupuesto),
+    score_ministraciones: parseNumberOrNull(r.score_ministraciones),
+    score_deuda: parseNumberOrNull(r.score_deuda),
+    score_patrimonio: parseNumberOrNull(r.score_patrimonio),
+    data_faltante: r.data_faltante === "true",
   }));
 }

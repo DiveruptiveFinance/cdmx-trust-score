@@ -29,9 +29,20 @@ export type Titular = {
 export type Ejecucion = {
   alcaldia: string;
   anio: number;
-  aprobado: number;
+  aprobado: number | null;
   modificado: number | null;
   ejercido: number | null;
+};
+
+export type ScoreByYear = {
+  alcaldia: string;
+  anio: number;
+  score_total: number | null;
+  score_presupuesto: number | null;
+  score_ministraciones: number | null;
+  score_deuda: number | null;
+  score_patrimonio: number | null;
+  data_faltante: boolean;
 };
 
 export function slugify(name: string): string {

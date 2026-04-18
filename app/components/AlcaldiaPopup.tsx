@@ -1,16 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   loadEjecucion,
   loadHallazgos,
   loadScores,
+  loadScoresByYear,
   loadTitulares,
 } from "../lib/loadData";
 import type {
   AlcaldiaScore,
   Ejecucion,
   Hallazgo,
+  ScoreByYear,
   Titular,
 } from "../lib/types";
 
@@ -53,6 +55,9 @@ export default function AlcaldiaPopup({
   const [titular, setTitular] = useState<Titular | null>(null);
   const [hallazgos, setHallazgos] = useState<Hallazgo[]>([]);
   const [ejec, setEjec] = useState<Ejecucion[]>([]);
+  const [scoresYear, setScoresYear] = useState<ScoreByYear[]>([]);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [tab, setTab] = useState<"grafica" | "tabla" | "score">("grafica");
   const [animateScore, setAnimateScore] = useState(0);
 
   const open = alcaldia !== null;
@@ -60,12 +65,15 @@ export default function AlcaldiaPopup({
   useEffect(() => {
     if (!alcaldia) return;
     let cancelled = false;
+    setSelectedYear(null);
+    setTab("grafica");
     (async () => {
-      const [scores, titulares, hall, ejecs] = await Promise.all([
+      const [scores, titulares, hall, ejecs, byYear] = await Promise.all([
         loadScores(),
         loadTitulares(),
         loadHallazgos(),
         loadEjecucion(),
+        loadScoresByYear(),
       ]);
       if (cancelled) return;
       const s = scores.find((r) => r.alcaldia === alcaldia) ?? null;
@@ -78,6 +86,11 @@ export default function AlcaldiaPopup({
       setHallazgos(hall.filter((h) => h.alcaldia === alcaldia).slice(0, 3));
       setEjec(
         ejecs
+          .filter((e) => e.alcaldia === alcaldia)
+          .sort((a, b) => a.anio - b.anio),
+      );
+      setScoresYear(
+        byYear
           .filter((e) => e.alcaldia === alcaldia)
           .sort((a, b) => a.anio - b.anio),
       );
@@ -331,7 +344,33 @@ export default function AlcaldiaPopup({
 
                 {ejec.length >= 2 && (
                   <PopupSection title="Presupuesto año con año (M MXN)">
-                    <Sparkline data={ejec} zone={zone as Zone} />
+                    <TabSwitcher
+                      tab={tab}
+                      setTab={setTab}
+                      hasScores={scoresYear.length >= 2}
+                    />
+                    {tab === "grafica" && (
+                      <InteractiveBars
+                        data={ejec}
+                        zone={zone as Zone}
+                        selectedYear={selectedYear}
+                        onSelect={setSelectedYear}
+                      />
+                    )}
+                    {tab === "tabla" && (
+                      <InteractiveTable
+                        data={ejec}
+                        selectedYear={selectedYear}
+                        onSelect={setSelectedYear}
+                      />
+                    )}
+                    {tab === "score" && scoresYear.length >= 2 && (
+                      <ScoreTimeline
+                        data={scoresYear}
+                        selectedYear={selectedYear}
+                        onSelect={setSelectedYear}
+                      />
+                    )}
                   </PopupSection>
                 )}
 
@@ -412,67 +451,387 @@ function SkeletonBlock() {
   );
 }
 
-function Sparkline({ data, zone }: { data: Ejecucion[]; zone: Zone | "n" }) {
-  const values = data.map((d) => d.aprobado ?? d.ejercido ?? 0);
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const range = max - min || 1;
-  const w = 420;
-  const h = 60;
-  const stepX = w / (values.length - 1 || 1);
-  const points = values.map((v, i) => {
-    const x = i * stepX;
-    const y = h - ((v - min) / range) * (h - 10) - 5;
-    return [x, y] as [number, number];
-  });
-  const path = points
-    .map((p, i) => `${i === 0 ? "M" : "L"}${p[0].toFixed(1)},${p[1].toFixed(1)}`)
-    .join(" ");
-  const area =
-    path + ` L${points[points.length - 1][0].toFixed(1)},${h} L0,${h} Z`;
+function TabSwitcher({
+  tab,
+  setTab,
+  hasScores,
+}: {
+  tab: "grafica" | "tabla" | "score";
+  setTab: (t: "grafica" | "tabla" | "score") => void;
+  hasScores: boolean;
+}) {
+  const tabs: { key: "grafica" | "tabla" | "score"; label: string }[] = [
+    { key: "grafica", label: "Gráfica" },
+    { key: "tabla", label: "Tabla" },
+    ...(hasScores ? [{ key: "score" as const, label: "Score anual" }] : []),
+  ];
+  return (
+    <div
+      role="tablist"
+      className="mb-3 inline-flex rounded-full border border-border bg-paper p-0.5 text-[11px]"
+    >
+      {tabs.map((t) => (
+        <button
+          key={t.key}
+          role="tab"
+          aria-selected={tab === t.key}
+          onClick={() => setTab(t.key)}
+          className={`rounded-full px-3 py-1.5 font-semibold transition ${
+            tab === t.key
+              ? "bg-ink text-paper"
+              : "text-ink-muted hover:text-ink"
+          }`}
+        >
+          {t.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function InteractiveBars({
+  data,
+  zone,
+  selectedYear,
+  onSelect,
+}: {
+  data: Ejecucion[];
+  zone: Zone | "n";
+  selectedYear: number | null;
+  onSelect: (y: number | null) => void;
+}) {
   const color = zone === "n" ? "#4A4A4A" : VERDICT_COLOR[zone as Zone].ring;
-  const first = values[0] || 1;
-  const last = values[values.length - 1] || 0;
-  const delta = values.length >= 2 ? Math.round(((last - first) / first) * 100) : 0;
-  const deltaClass =
-    delta > 0
-      ? "text-success-text"
-      : delta < 0
-        ? "text-danger-text"
-        : "text-ink-muted";
+  const max = Math.max(
+    ...data.flatMap((d) => [d.aprobado ?? 0, d.ejercido ?? 0]),
+    1,
+  );
+  const active =
+    selectedYear != null
+      ? data.find((d) => d.anio === selectedYear) ?? data[data.length - 1]
+      : data[data.length - 1];
+  const activeTasa =
+    active.aprobado && active.aprobado > 0 && active.ejercido != null
+      ? (active.ejercido / active.aprobado) * 100
+      : null;
+  const fmt = (n: number) =>
+    n.toLocaleString("es-MX", { maximumFractionDigits: 0 });
 
   return (
     <div>
-      <div className="mb-2 flex items-center justify-between text-[12px]">
-        <strong className="font-semibold text-ink">Presupuesto sexenio</strong>
-        <span className={`font-semibold ${deltaClass}`}>
-          {delta > 0 ? "+" : ""}
-          {delta}% vs {data[0].anio}
-        </span>
+      <div className="mb-3 flex items-end justify-between gap-3 rounded-xl border border-border bg-paper p-3">
+        <div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-ink-muted">
+            {active.anio}
+          </div>
+          <div className="mt-1 flex gap-3 text-[12px]">
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-3 rounded-sm bg-primary" />
+              <span className="tabular-nums text-ink">
+                {active.aprobado != null ? `$${fmt(active.aprobado)}M` : "—"}
+              </span>
+              <span className="text-ink-muted">aprobado</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-3 rounded-sm bg-success" />
+              <span className="tabular-nums text-ink">
+                {active.ejercido != null ? `$${fmt(active.ejercido)}M` : "—"}
+              </span>
+              <span className="text-ink-muted">ejercido</span>
+            </span>
+          </div>
+        </div>
+        {activeTasa !== null && (
+          <div
+            className="rounded-full px-2.5 py-1 text-[11px] font-bold tabular-nums"
+            style={{
+              background: VERDICT_COLOR[fidelityZone(activeTasa)].soft,
+              color: VERDICT_COLOR[fidelityZone(activeTasa)].text,
+            }}
+          >
+            {activeTasa.toFixed(1)}% fidelidad
+          </div>
+        )}
+      </div>
+      <div
+        className="flex h-[140px] items-end gap-2"
+        onMouseLeave={() => onSelect(null)}
+      >
+        {data.map((d) => {
+          const isActive =
+            selectedYear === d.anio ||
+            (selectedYear === null && d.anio === data[data.length - 1].anio);
+          const aprobH = ((d.aprobado ?? 0) / max) * 100;
+          const ejercH = ((d.ejercido ?? 0) / max) * 100;
+          return (
+            <button
+              key={d.anio}
+              type="button"
+              onMouseEnter={() => onSelect(d.anio)}
+              onFocus={() => onSelect(d.anio)}
+              onClick={() => onSelect(d.anio)}
+              className={`group relative flex flex-1 cursor-pointer flex-col items-center transition ${
+                isActive ? "opacity-100" : "opacity-80 hover:opacity-100"
+              }`}
+            >
+              <div className="flex h-full w-full items-end justify-center gap-1">
+                {d.aprobado != null && (
+                  <div
+                    className="w-full max-w-[16px] rounded-t bg-primary transition-all"
+                    style={{
+                      height: `${aprobH}%`,
+                      opacity: isActive ? 1 : 0.55,
+                    }}
+                  />
+                )}
+                {d.ejercido != null && (
+                  <div
+                    className="w-full max-w-[16px] rounded-t transition-all"
+                    style={{
+                      height: `${ejercH}%`,
+                      background: color,
+                      opacity: isActive ? 1 : 0.55,
+                    }}
+                  />
+                )}
+              </div>
+              <div
+                className={`mt-1 text-[10px] font-semibold transition ${
+                  isActive ? "text-ink" : "text-ink-muted"
+                }`}
+              >
+                {d.anio}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+      <p className="mt-2 text-[10px] text-ink-muted">
+        Pasa el cursor o toca cada año para ver el detalle.
+      </p>
+    </div>
+  );
+}
+
+function InteractiveTable({
+  data,
+  selectedYear,
+  onSelect,
+}: {
+  data: Ejecucion[];
+  selectedYear: number | null;
+  onSelect: (y: number | null) => void;
+}) {
+  const fmt = (n: number) =>
+    n.toLocaleString("es-MX", { maximumFractionDigits: 0 });
+  return (
+    <div className="overflow-x-auto rounded-xl border border-border">
+      <table className="w-full text-left text-[12px]">
+        <thead className="bg-paper text-[10px] uppercase tracking-widest text-ink-muted">
+          <tr>
+            <th className="px-3 py-2 font-bold">Año</th>
+            <th className="px-3 py-2 font-bold">Aprobado</th>
+            <th className="px-3 py-2 font-bold">Ejercido</th>
+            <th className="px-3 py-2 font-bold">Fidelidad</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-border">
+          {data.map((d) => {
+            const tasa =
+              d.aprobado && d.aprobado > 0 && d.ejercido != null
+                ? (d.ejercido / d.aprobado) * 100
+                : null;
+            const zone = tasa !== null ? fidelityZone(tasa) : null;
+            const isSel = selectedYear === d.anio;
+            return (
+              <tr
+                key={d.anio}
+                onMouseEnter={() => onSelect(d.anio)}
+                onClick={() => onSelect(d.anio)}
+                className={`cursor-pointer transition ${
+                  isSel ? "bg-primary-soft" : "hover:bg-paper"
+                }`}
+              >
+                <td className="px-3 py-2 font-bold text-ink">{d.anio}</td>
+                <td className="px-3 py-2 tabular-nums text-ink">
+                  {d.aprobado != null ? `$${fmt(d.aprobado)}M` : "—"}
+                </td>
+                <td className="px-3 py-2 tabular-nums text-ink">
+                  {d.ejercido != null ? `$${fmt(d.ejercido)}M` : "—"}
+                </td>
+                <td
+                  className="px-3 py-2 font-bold tabular-nums"
+                  style={{
+                    color: zone ? VERDICT_COLOR[zone].text : "#4A4A4A",
+                  }}
+                >
+                  {tasa !== null ? `${tasa.toFixed(1)}%` : "—"}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function ScoreTimeline({
+  data,
+  selectedYear,
+  onSelect,
+}: {
+  data: ScoreByYear[];
+  selectedYear: number | null;
+  onSelect: (y: number | null) => void;
+}) {
+  const w = 440;
+  const h = 110;
+  const padL = 28;
+  const padR = 8;
+  const padT = 10;
+  const padB = 24;
+  const chartW = w - padL - padR;
+  const chartH = h - padT - padB;
+
+  const stepX = data.length > 1 ? chartW / (data.length - 1) : 0;
+  const yFor = (v: number) => padT + chartH - (v / 100) * chartH;
+
+  const points = data.map((d, i) => {
+    const x = padL + i * stepX;
+    const y = yFor(d.score_total ?? 0);
+    return { x, y, d };
+  });
+
+  const path = points
+    .map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+    .join(" ");
+
+  const active =
+    selectedYear != null
+      ? points.find((p) => p.d.anio === selectedYear) ?? points[points.length - 1]
+      : points[points.length - 1];
+
+  return (
+    <div>
+      <div className="mb-2 flex items-end justify-between rounded-xl border border-border bg-paper p-3 text-[12px]">
+        <div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-ink-muted">
+            Score Total · {active.d.anio}
+          </div>
+          <div className="font-display mt-1 text-2xl font-bold tabular-nums text-ink">
+            {active.d.score_total ?? "—"}
+            <span className="ml-1 text-xs text-ink-muted">/ 100</span>
+          </div>
+        </div>
+        <div className="flex gap-2 text-[10px]">
+          {(
+            [
+              { k: "score_presupuesto", l: "Pres" },
+              { k: "score_ministraciones", l: "Min" },
+              { k: "score_deuda", l: "Deu" },
+            ] as const
+          ).map((c) => {
+            const v = active.d[c.k];
+            return (
+              <div key={c.k} className="text-center">
+                <div className="text-[9px] uppercase tracking-wider text-ink-muted">
+                  {c.l}
+                </div>
+                <div className="font-display font-bold tabular-nums text-ink">
+                  {v != null ? Math.round(v) : "—"}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
       <svg
         viewBox={`0 0 ${w} ${h}`}
-        preserveAspectRatio="none"
-        className="h-[60px] w-full"
+        className="h-[110px] w-full"
+        onMouseLeave={() => onSelect(null)}
       >
-        <path d={area} fill={color} opacity="0.15" />
+        {[0, 33, 67, 100].map((v) => (
+          <line
+            key={v}
+            x1={padL}
+            x2={w - padR}
+            y1={yFor(v)}
+            y2={yFor(v)}
+            stroke="#E8E0CC"
+            strokeDasharray={v === 33 || v === 67 ? "2 3" : undefined}
+          />
+        ))}
+        {[0, 50, 100].map((v) => (
+          <text
+            key={v}
+            x={padL - 6}
+            y={yFor(v) + 3}
+            fontSize="9"
+            fill="#4A4A4A"
+            textAnchor="end"
+          >
+            {v}
+          </text>
+        ))}
         <path
           d={path}
           fill="none"
-          stroke={color}
-          strokeWidth="2.5"
+          stroke="#D62987"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        {points.map((p, i) => (
-          <circle key={i} cx={p[0]} cy={p[1]} r="3.5" fill={color} />
+        {points.map((p) => {
+          const z =
+            p.d.score_total !== null ? zoneFor(p.d.score_total) : "n";
+          const dotColor =
+            z === "n" ? "#4A4A4A" : VERDICT_COLOR[z as Zone].ring;
+          const isActive = selectedYear === p.d.anio;
+          return (
+            <g key={p.d.anio}>
+              <rect
+                x={p.x - stepX / 2}
+                y={padT}
+                width={stepX || 20}
+                height={chartH}
+                fill="transparent"
+                onMouseEnter={() => onSelect(p.d.anio)}
+                onClick={() => onSelect(p.d.anio)}
+                style={{ cursor: "pointer" }}
+              />
+              <circle
+                cx={p.x}
+                cy={p.y}
+                r={isActive ? 5 : 3.5}
+                fill={dotColor}
+                stroke={isActive ? "#1A1A1A" : "white"}
+                strokeWidth={isActive ? 2 : 1.5}
+                style={{ transition: "r 0.15s" }}
+              />
+            </g>
+          );
+        })}
+        {data.map((d, i) => (
+          <text
+            key={d.anio}
+            x={padL + i * stepX}
+            y={h - 8}
+            fontSize="9"
+            fill={selectedYear === d.anio ? "#1A1A1A" : "#4A4A4A"}
+            fontWeight={selectedYear === d.anio ? "700" : "500"}
+            textAnchor="middle"
+          >
+            {d.anio}
+          </text>
         ))}
       </svg>
-      <div className="mt-1 flex justify-between text-[10px] font-semibold text-ink-muted">
-        {data.map((d) => (
-          <span key={d.anio}>{d.anio}</span>
-        ))}
-      </div>
     </div>
   );
+}
+
+function fidelityZone(tasa: number): Zone {
+  const dist = Math.abs(tasa - 100);
+  if (dist <= 5) return "v";
+  if (dist <= 15) return "a";
+  return "r";
 }
