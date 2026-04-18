@@ -1,16 +1,23 @@
-# Textos del sitio — [PRODUCTO]
+<!--
+Tagline elegido: "El Cuentas · Tu alcaldía en claro."
+Alternativas para Wen:
+  1. "El Cuentas · Sabe dónde vive tu dinero."
+  2. "El Cuentas · El único chilango que leyó los 400 PDFs."
+-->
+
+# Textos del sitio — El Cuentas
 
 > Copy maestro del sitio. Español mexicano, voz activa, directa.
 > Framework: StoryBrand (Miller) + Tribu/Purple Cow (Godin).
-> Hero = ciudadano de CDMX. Guía = [PRODUCTO]. Propuesta = respuestas claras sobre tu dinero.
+> Hero = ciudadano de CDMX. Guía = El Cuentas (personaje, nickname chilango). Propuesta = respuestas claras sobre tu dinero.
 
 ---
 
 ## Landing / Header
 
-- **Nombre del producto:** [PRODUCTO]
-- **Tagline (1 línea):** Tu alcaldía en un número. Tu ciudad en claro.
-- **Subtítulo (1-2 líneas):** [PRODUCTO] mide qué tan transparente es cada una de las 16 alcaldías de la CDMX, con datos oficiales y en un idioma que sí se entiende.
+- **Nombre del producto:** El Cuentas
+- **Tagline (1 línea):** El Cuentas · Tu alcaldía en claro.
+- **Subtítulo (1-2 líneas):** El Cuentas mide qué tan transparente es cada una de las 16 alcaldías de la CDMX, con datos oficiales y en un idioma que sí se entiende.
 - **CTA principal (botón):** Ver mi alcaldía
 - **CTA secundario (link):** Cómo lo calculamos
 
@@ -84,20 +91,20 @@
 ### Fuentes y disclaimer (pie del detalle)
 
 - **Fuentes:** Todos los datos vienen de registros públicos: [datos.cdmx.gob.mx](https://datos.cdmx.gob.mx), Cuenta Pública CDMX, y las declaraciones patrimoniales publicadas por cada alcaldía.
-- **Disclaimer:** [PRODUCTO] no acusa, no opina. Sólo lee la cifra oficial y la traduce. Si un dato cambia en la fuente, el score cambia aquí.
+- **Disclaimer:** El Cuentas no acusa, no opina. Sólo lee la cifra oficial y la traduce. Si un dato cambia en la fuente, el score cambia aquí.
 
 ---
 
 ## Widget agente (chat flotante)
 
-- **Placeholder del input:** Pregúntale a [PRODUCTO]… por ejemplo: ¿en qué gastó mi alcaldía?
+- **Placeholder del input:** Pregúntale al Cuentas… por ejemplo: ¿en qué gastó mi alcaldía?
 - **Saludo inicial (1-2 líneas):**
-  > Hola. Soy [PRODUCTO]. Pregúntame sobre tu alcaldía como le preguntarías a un amigo que sí leyó todo el presupuesto.
+  > Qué onda, soy El Cuentas. Yo me leí los presupuestos para que tú no tengas que. Pregúntame lo que quieras de tu alcaldía.
 - **3 preguntas sugeridas (chips):**
-  1. ¿Cuál es la alcaldía más transparente?
-  2. ¿En qué gasta [NOMBRE_ALCALDÍA]?
-  3. ¿Cuánto debe mi alcaldía?
-- **Mensaje de loading:** Revisando los datos oficiales…
+  1. ¿Quieres saber cuál alcaldía cumplió más?
+  2. ¿Te cuento en qué gasta [NOMBRE_ALCALDÍA]?
+  3. ¿Le checo a tu alcaldía cuánto debe?
+- **Mensaje de loading:** Déjame revisar los datos oficiales…
 - **Mensaje de error:** No pude responder eso ahorita. Intenta reformular tu pregunta o pregúntame otra cosa.
 - **Mensaje sin datos:** No tengo suficiente información pública para contestarte con honestidad. Prefiero decírtelo a inventar.
 
@@ -148,7 +155,7 @@ Seamos claros para no venderte humo.
 
 ### Disclaimer legal y reputacional
 
-[PRODUCTO] es una herramienta ciudadana de código abierto. No está afiliada a ninguna alcaldía, partido político, gobierno o medio de comunicación.
+El Cuentas es una herramienta ciudadana de código abierto. No está afiliado a ninguna alcaldía, partido político, gobierno o medio de comunicación.
 
 Los datos mostrados provienen de fuentes oficiales publicadas por el Gobierno de la Ciudad de México y sus alcaldías. Si detectas un error, escríbenos: corregimos en público.
 
@@ -168,14 +175,14 @@ El score es una interpretación metodológica, no un juicio legal. No constituye
 
 ### Crédito open source
 
-Hecho por ciudadanos para ciudadanos. [PRODUCTO] es software libre bajo licencia [LICENCIA]. El código vive en GitHub: [ENLACE_REPO].
+Hecho por ciudadanos para ciudadanos. El Cuentas es software libre bajo licencia [LICENCIA]. El código vive en GitHub: [ENLACE_REPO].
 
-Si le encuentras un error, ábrelo como issue. Si quieres ayudar, los PRs son bienvenidos.
+El Cuentas vive en código abierto. El que quiera sumarse, bienvenido. Si le encuentras un error, ábrelo como issue. Si quieres ayudar, los PRs son bienvenidos.
 
 ### Disclaimer corto
 
-Datos de fuentes oficiales. [PRODUCTO] no acusa ni opina — traduce. Última actualización: [FECHA].
+Datos de fuentes oficiales. El Cuentas no acusa ni opina — traduce. Última actualización: [FECHA].
 
 ### Línea de cierre (microcopy)
 
-Tu dinero. Tu ciudad. Tus preguntas.
+Tu dinero. Tu ciudad. Tus preguntas. El Cuentas los traduce.
