@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" width="960" height="320">
+  <!-- Concepto A — Versión oscura sobre carbón -->
+  <rect width="960" height="320" fill="#1A1A1A"/>
+
+  <g font-family="Fraunces, 'Playfair Display', Georgia, serif">
+    <text x="120" y="195"
+          font-size="64"
+          font-weight="500"
+          font-style="italic"
+          fill="#FFFCF5"
+          letter-spacing="-1">El</text>
+
+    <text x="220" y="200"
+          font-size="130"
+          font-weight="800"
+          fill="#FFFCF5"
+          letter-spacing="-5">Cuentas</text>
+
+    <path d="M 230 225 Q 260 242 295 225"
+          stroke="#D62987"
+          stroke-width="8"
+          fill="none"
+          stroke-linecap="round"/>
+
+    <circle cx="830" cy="145" r="10" fill="#D62987"/>
+  </g>
+
+  <text x="120" y="260"
+        font-family="Inter, system-ui, sans-serif"
+        font-size="22"
+        font-weight="500"
+        fill="#F1B12B"
+        letter-spacing="4"
+        opacity="0.85">EL SABIO DEL PRESUPUESTO · CDMX</text>
+</svg>

@@ -1,16 +1,15 @@
 import Map from "./components/Map";
 import Dashboard from "./components/Dashboard";
 import ChatWidget from "./components/ChatWidget";
+import Logo from "./components/Logo";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-paper text-ink">
       <header className="border-b border-border bg-paper-elevated">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          <div className="flex items-baseline gap-2">
-            <span className="text-lg font-bold tracking-tight text-primary">
-              El Cuentas
-            </span>
+          <div className="flex items-center gap-3">
+            <Logo size={36} />
             <span className="hidden text-sm text-ink-muted sm:inline">
               · Tu alcaldía en claro
             </span>
