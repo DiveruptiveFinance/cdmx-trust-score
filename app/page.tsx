@@ -4,6 +4,8 @@ import ChatWidget from "./components/ChatWidget";
 import Logo from "./components/Logo";
 import HeroStats from "./components/HeroStats";
 import Ticker from "./components/Ticker";
+import Capabilities from "./components/Capabilities";
+import FAQ from "./components/FAQ";
 
 export default function Home() {
   return (
@@ -151,6 +153,10 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <Capabilities />
+
+      <FAQ />
 
       <footer className="border-t border-border bg-ink text-ink-inverse">
         <div className="mx-auto grid max-w-6xl gap-10 px-6 py-16 sm:grid-cols-[2fr_1fr_1fr_1fr]">
