@@ -117,10 +117,13 @@ export default function Home() {
         </p>
         <div className="mt-2 mb-5">
           <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Ranking en vivo.
+            Quiénes cumplen.
             <br />
-            <span className="text-ink-muted">De más transparente a más opaca.</span>
+            <span className="text-ink-muted">Quiénes te deben explicaciones.</span>
           </h2>
+          <p className="mt-3 max-w-2xl text-lg text-ink-muted">
+            El podio lo hacen los datos. Pica cualquier alcaldía para ver su detalle.
+          </p>
         </div>
         <Dashboard />
       </section>

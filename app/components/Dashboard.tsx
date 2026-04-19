@@ -70,19 +70,9 @@ export default function Dashboard() {
         />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <RankingCard
-          title="Las más transparentes"
-          subtitle="Top 3 · score más alto"
-          rows={top3}
-          tone="success"
-        />
-        <RankingCard
-          title="Las que más deben explicar"
-          subtitle="Bottom 3 · score más bajo"
-          rows={bottom3}
-          tone="danger"
-        />
+      <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
+        <Podio top3={top3} />
+        <BottomList rows={bottom3} />
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-border bg-paper-elevated">
@@ -163,44 +153,109 @@ function StatCard({
   );
 }
 
-function RankingCard({
-  title,
-  subtitle,
-  rows,
-  tone,
-}: {
-  title: string;
-  subtitle: string;
-  rows: AlcaldiaScore[];
-  tone: "success" | "danger";
-}) {
-  const toneBg =
-    tone === "success"
-      ? "bg-success-soft border-success/20"
-      : "bg-danger-soft border-danger/20";
+function Podio({ top3 }: { top3: AlcaldiaScore[] }) {
+  const [first, second, third] = top3;
   return (
-    <div className={`rounded-2xl border p-5 ${toneBg}`}>
-      <div className="mb-4">
-        <h3 className="text-base font-bold text-ink">{title}</h3>
-        <p className="text-xs text-ink-muted">{subtitle}</p>
+    <div className="rounded-2xl border border-success/30 bg-success-soft p-6">
+      <h4 className="mb-6 text-[11px] font-bold uppercase tracking-[0.18em] text-success-text">
+        Top 3 · Transparentes
+      </h4>
+      <div className="grid items-end gap-3 sm:grid-cols-3">
+        {third && <PodioSlot row={third} place={3} medal="🥉" />}
+        {first && <PodioSlot row={first} place={1} medal="🏆" elevated />}
+        {second && <PodioSlot row={second} place={2} medal="🥈" />}
       </div>
+    </div>
+  );
+}
+
+function PodioSlot({
+  row,
+  place,
+  medal,
+  elevated = false,
+}: {
+  row: AlcaldiaScore;
+  place: number;
+  medal: string;
+  elevated?: boolean;
+}) {
+  return (
+    <Link
+      href={`/alcaldia/${slugify(row.alcaldia)}`}
+      className={`group relative flex flex-col items-center rounded-2xl bg-paper-elevated px-3 py-5 text-center transition hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(40,102,52,0.18)] ${
+        elevated
+          ? "border-2 border-success ring-2 ring-success/20 sm:-mt-4 sm:py-7"
+          : "border border-border"
+      }`}
+    >
+      <div
+        className={`absolute -top-5 left-1/2 -translate-x-1/2 text-3xl ${
+          elevated ? "sm:text-4xl" : ""
+        }`}
+        aria-hidden="true"
+      >
+        {medal}
+      </div>
+      <div className="font-display mt-1 text-xs font-bold uppercase tracking-widest text-ink-muted">
+        #{place}
+      </div>
+      <div
+        className={`font-display mt-2 font-bold text-ink ${
+          elevated ? "text-base" : "text-sm"
+        }`}
+      >
+        {row.alcaldia}
+      </div>
+      <div
+        className={`font-display mt-2 tabular-nums font-extrabold leading-none ${
+          elevated ? "text-5xl text-success-text" : "text-3xl text-ink"
+        }`}
+      >
+        {row.score_total ?? "—"}
+      </div>
+      <div className="mt-1 text-[10px] uppercase tracking-widest text-ink-muted">
+        / 100
+      </div>
+    </Link>
+  );
+}
+
+function BottomList({ rows }: { rows: AlcaldiaScore[] }) {
+  return (
+    <div className="rounded-2xl border border-danger/25 bg-danger-soft p-5">
+      <h4 className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-danger-text">
+        <svg
+          width="14"
+          height="14"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2.4}
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
+        </svg>
+        Bottom 3 · Opacas
+      </h4>
       <ol className="space-y-2">
         {rows.map((r, i) => (
           <li key={r.alcaldia}>
             <Link
               href={`/alcaldia/${slugify(r.alcaldia)}`}
-              className="flex items-center gap-3 rounded-xl bg-paper-elevated px-3.5 py-2.5 transition hover:ring-2 hover:ring-primary/40"
+              className="flex items-center gap-3 rounded-xl bg-paper-elevated px-4 py-3 transition hover:ring-2 hover:ring-danger/40"
             >
-              <span className="w-5 text-sm tabular-nums text-ink-muted">
+              <span className="w-5 text-xs tabular-nums text-ink-muted">
                 {i + 1}
               </span>
               <span className="flex-1 text-sm font-semibold text-ink">
                 {r.alcaldia}
               </span>
-              <span
-                className="rounded-full px-2.5 py-1 text-xs font-bold text-white"
-                style={{ background: scoreColor(r.score_total) }}
-              >
+              <span className="font-display tabular-nums text-2xl font-extrabold text-danger-text">
                 {r.score_total ?? "—"}
               </span>
             </Link>
