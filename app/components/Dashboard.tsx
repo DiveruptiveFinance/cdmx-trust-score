@@ -1,10 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { loadScores } from "../lib/loadData";
-import { scoreColor, scoreLabel, slugify } from "../lib/types";
+import { scoreColor, scoreLabel } from "../lib/types";
 import type { AlcaldiaScore } from "../lib/types";
+
+function openAlcaldia(name: string) {
+  window.dispatchEvent(new CustomEvent("open-alcaldia", { detail: name }));
+  document
+    .getElementById("mapa")
+    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
 export default function Dashboard() {
   const [rows, setRows] = useState<AlcaldiaScore[]>([]);
@@ -92,9 +98,10 @@ export default function Dashboard() {
         <ol className="divide-y divide-border">
           {rows.map((r, i) => (
             <li key={r.alcaldia}>
-              <Link
-                href={`/alcaldia/${slugify(r.alcaldia)}`}
-                className="flex items-center gap-4 px-5 py-3 transition hover:bg-primary-soft/40"
+              <button
+                type="button"
+                onClick={() => openAlcaldia(r.alcaldia)}
+                className="flex w-full items-center gap-4 px-5 py-3 text-left transition hover:bg-primary-soft/40"
               >
                 <span className="w-6 text-right text-sm tabular-nums text-ink-muted">
                   {i + 1}
@@ -112,7 +119,7 @@ export default function Dashboard() {
                 <span className="w-14 text-right text-base tabular-nums font-semibold text-ink">
                   {r.score_total ?? "—"}
                 </span>
-              </Link>
+              </button>
             </li>
           ))}
         </ol>
@@ -181,9 +188,10 @@ function PodioSlot({
   elevated?: boolean;
 }) {
   return (
-    <Link
-      href={`/alcaldia/${slugify(row.alcaldia)}`}
-      className={`group relative flex flex-col items-center rounded-2xl bg-paper-elevated px-3 py-5 text-center transition hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(40,102,52,0.18)] ${
+    <button
+      type="button"
+      onClick={() => openAlcaldia(row.alcaldia)}
+      className={`group relative flex w-full flex-col items-center rounded-2xl bg-paper-elevated px-3 py-5 text-center transition hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(40,102,52,0.18)] ${
         elevated
           ? "border-2 border-success ring-2 ring-success/20 sm:-mt-4 sm:py-7"
           : "border border-border"
@@ -217,7 +225,7 @@ function PodioSlot({
       <div className="mt-1 text-[10px] uppercase tracking-widest text-ink-muted">
         / 100
       </div>
-    </Link>
+    </button>
   );
 }
 
@@ -245,9 +253,10 @@ function BottomList({ rows }: { rows: AlcaldiaScore[] }) {
       <ol className="space-y-2">
         {rows.map((r, i) => (
           <li key={r.alcaldia}>
-            <Link
-              href={`/alcaldia/${slugify(r.alcaldia)}`}
-              className="flex items-center gap-3 rounded-xl bg-paper-elevated px-4 py-3 transition hover:ring-2 hover:ring-danger/40"
+            <button
+              type="button"
+              onClick={() => openAlcaldia(r.alcaldia)}
+              className="flex w-full items-center gap-3 rounded-xl bg-paper-elevated px-4 py-3 text-left transition hover:ring-2 hover:ring-danger/40"
             >
               <span className="w-5 text-xs tabular-nums text-ink-muted">
                 {i + 1}
@@ -258,7 +267,7 @@ function BottomList({ rows }: { rows: AlcaldiaScore[] }) {
               <span className="font-display tabular-nums text-2xl font-extrabold text-danger-text">
                 {r.score_total ?? "—"}
               </span>
-            </Link>
+            </button>
           </li>
         ))}
       </ol>

@@ -31,6 +31,15 @@ export default function MapClient() {
     })();
   }, []);
 
+  useEffect(() => {
+    function handler(e: Event) {
+      const name = (e as CustomEvent<string>).detail;
+      if (name) setActiveAlcaldia(name);
+    }
+    window.addEventListener("open-alcaldia", handler);
+    return () => window.removeEventListener("open-alcaldia", handler);
+  }, []);
+
   const styleFn = (feature?: Feature<Geometry, { NOMGEO?: string }>): PathOptions => {
     const name = feature?.properties?.NOMGEO ?? "";
     const score = scoresByName[name]?.score_total ?? null;
