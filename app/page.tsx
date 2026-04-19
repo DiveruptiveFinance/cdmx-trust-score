@@ -6,6 +6,7 @@ import HeroStats from "./components/HeroStats";
 import Ticker from "./components/Ticker";
 import Capabilities from "./components/Capabilities";
 import FAQ from "./components/FAQ";
+import HowItWorks from "./components/HowItWorks";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
           <Logo size={36} />
           <nav className="flex items-center gap-5 text-sm text-ink-muted">
+            <a href="#como" className="hover:text-ink">Cómo funciona</a>
             <a href="#mapa" className="hover:text-ink">Mapa</a>
             <a href="#ranking" className="hover:text-ink">Ranking</a>
             <a href="/metodologia" className="hover:text-ink">
@@ -37,6 +39,10 @@ export default function Home() {
           />
           En vivo · Cuenta Pública 2018–2024
         </div>
+
+        <p className="mb-3 text-[13px] font-semibold uppercase tracking-[0.14em] text-primary-text">
+          Hecho por chilangos, para chilangos.
+        </p>
 
         <HeroStats />
 
@@ -85,6 +91,8 @@ export default function Home() {
       </section>
 
       <Ticker />
+
+      <HowItWorks />
 
       <section id="mapa" className="mx-auto max-w-6xl px-6 py-14">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary-text">
@@ -140,12 +148,13 @@ export default function Home() {
               ¿Quién es El Cuentas?
             </h2>
             <p className="mt-4 max-w-[56ch] text-lg text-ink-muted">
-              Un chilango que se leyó los tomos completos de la Cuenta Pública
-              CDMX 2018–2024. Ahora te traduce lo que encontró.
+              El único chilango que se leyó los 400 PDFs del presupuesto de la
+              CDMX — y todavía se quedó con ganas de más.
             </p>
             <p className="mt-3 max-w-[56ch] text-lg text-ink-muted">
-              Sin jerga, sin adjetivos políticos. Solo cifras oficiales y la
-              distancia entre lo que se aprobó y lo que se ejerció.
+              Ahora te los traduce. Sin jerga, sin colores de partido. Solo la
+              cifra oficial, explicada como te la explicaría un compa que sí
+              entiende de números.
             </p>
             <p className="font-display mt-5 text-xl italic text-primary-text">
               “Pregúntame lo que quieras. Yo ya leí la letra chiquita.”
